@@ -72,13 +72,13 @@ const WorkRoadmapSection = () => {
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
+        duration: 0.6,
+        ease: 'easeInOut',
       },
     },
   };
@@ -148,16 +148,10 @@ const WorkRoadmapSection = () => {
             variants={cardVariants}
           >
             {/* Step Card */}
-            <div className={`relative rounded-3xl overflow-hidden bg-gradient-to-br ${
-              theme === 'blue' 
-                ? 'from-blue-500 via-blue-600 to-blue-700' 
-                : 'from-orange-500 via-orange-600 to-red-500'
-            } p-8 h-80 flex flex-col justify-center items-center`}>
-              {/* Background Pattern */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5"></div>
-              
+            <div className="relative bg-white rounded-3xl p-8 shadow-lg group-hover:shadow-2xl transition-all duration-500 overflow-hidden">
+              {/* Remove background gradient */}
               {/* Content */}
-              <div className="relative z-10 w-full h-full flex flex-col justify-between">
+              <div className="relative z-10 space-y-6">
                 {/* Step 1 - Meeting Icons */}
                 {step.id === 1 && (
                   <div className="flex flex-col items-center justify-center h-full space-y-6">

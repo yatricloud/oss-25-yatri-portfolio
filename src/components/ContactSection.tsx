@@ -51,21 +51,21 @@ const ContactSection = () => {
       label: 'Email',
       value: 'yatharth@example.com',
       href: 'mailto:yatharth@example.com',
-      color: theme === 'blue' ? 'bg-blue-500' : 'bg-red-500'
+      color: theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'
     },
     {
       icon: Phone,
       label: 'Phone',
       value: '+1 (555) 123-4567',
       href: 'tel:+15551234567',
-      color: theme === 'blue' ? 'bg-green-500' : 'bg-orange-500'
+      color: theme === 'blue' ? 'bg-blue-400' : 'bg-orange-400'
     },
     {
       icon: MapPin,
       label: 'Location',
       value: 'San Francisco, CA',
       href: '#',
-      color: theme === 'blue' ? 'bg-purple-500' : 'bg-pink-500'
+      color: theme === 'blue' ? 'bg-blue-300' : 'bg-orange-300'
     }
   ];
 
@@ -90,13 +90,13 @@ const ContactSection = () => {
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
+        duration: 0.6,
+        ease: 'easeInOut',
       },
     },
   };

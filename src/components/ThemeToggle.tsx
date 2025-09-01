@@ -19,18 +19,6 @@ const ThemeToggle = () => {
       name: 'Sunset Orange',
       colors: ['#F97316', '#EA580C', '#DC2626', '#B91C1C'],
       gradient: 'from-orange-400 via-orange-500 to-red-500'
-    },
-    {
-      id: 'purple',
-      name: 'Royal Purple',
-      colors: ['#8B5CF6', '#7C3AED', '#6D28D9', '#5B21B6'],
-      gradient: 'from-purple-400 via-purple-500 to-purple-600'
-    },
-    {
-      id: 'green',
-      name: 'Forest Green',
-      colors: ['#10B981', '#059669', '#047857', '#065F46'],
-      gradient: 'from-emerald-400 via-emerald-500 to-emerald-600'
     }
   ];
 
@@ -57,26 +45,7 @@ const ThemeToggle = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, delay: 1 }}
       >
-        {/* Animated Border */}
-        <motion.div
-          className={`absolute inset-0 bg-gradient-to-r ${
-            theme === 'blue' ? 'from-blue-500 via-purple-500 to-orange-500' : 'from-orange-500 via-red-500 to-purple-500'
-          } opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-          animate={{
-            background: [
-              'linear-gradient(0deg, #3B82F6, #8B5CF6, #F97316)',
-              'linear-gradient(90deg, #8B5CF6, #F97316, #10B981)',
-              'linear-gradient(180deg, #F97316, #10B981, #3B82F6)',
-              'linear-gradient(270deg, #10B981, #3B82F6, #8B5CF6)',
-              'linear-gradient(360deg, #3B82F6, #8B5CF6, #F97316)'
-            ]
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
+        {/* Remove animated border */}
         
         {/* Inner Content */}
         <div className="relative z-10 bg-white rounded-xl w-14 h-14 flex items-center justify-center">
@@ -88,19 +57,10 @@ const ThemeToggle = () => {
           </motion.div>
           
           {/* Active Theme Indicator */}
-          <motion.div
+          <div
             className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${
               theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'
             } border-2 border-white shadow-lg`}
-            animate={{ 
-              scale: [1, 1.2, 1],
-              boxShadow: [
-                '0 0 0 0 rgba(59, 130, 246, 0.4)',
-                '0 0 0 8px rgba(59, 130, 246, 0)',
-                '0 0 0 0 rgba(59, 130, 246, 0)'
-              ]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
           />
         </div>
       </motion.button>

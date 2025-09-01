@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navigation from './components/Navigation';
 import HeroSection from './components/HeroSection';
@@ -13,8 +14,10 @@ import TestimonialsSection from './components/TestimonialsSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
 import ThemeToggle from './components/ThemeToggle';
+import AdminPage from './pages/AdminPage';
+import { AuthProvider } from './contexts/AuthContext';
 
-function App() {
+function PortfolioApp() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
       <motion.div
@@ -73,6 +76,19 @@ function App() {
 
       <ThemeToggle />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<PortfolioApp />} />
+          <Route path="/admin" element={<AdminPage />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

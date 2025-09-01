@@ -12,7 +12,7 @@ const TestimonialsSection = () => {
       id: 1,
       number: '02',
       title: 'Highly Recommend His Services',
-      content: "Deciding to work with Tanvir was the best decision ever. He is meticulous, talented, patient and really knows how to bring one's vision to life. Thank you so much. Highly recommend his services.",
+              content: "Deciding to work with Yatharth Chauhan was the best decision ever. He is meticulous, talented, patient and really knows how to bring one's vision to life. Thank you so much. Highly recommend his services.",
       author: 'Katlego Sekete',
       position: 'CEO at Baadaye Agency',
       rating: 5,

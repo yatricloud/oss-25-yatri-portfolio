@@ -1,9 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
+import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const DesignPartnerSection = () => {
   const { theme } = useTheme();
+  const { user, loading } = useGitHubProfile();
 
   return (
     <div className="text-center space-y-8 py-16">
@@ -26,7 +28,7 @@ const DesignPartnerSection = () => {
         className="space-y-2"
       >
         <h2 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-          Hi, I'm Yatharth Chauhan
+          Hi, I'm {user?.name || 'Yatharth Chauhan'}
           <br />
           AI Engineer & Full-Stack Developer
         </h2>
@@ -61,11 +63,21 @@ const DesignPartnerSection = () => {
             whileHover={{ scale: 1.02, y: -5 }}
             transition={{ duration: 0.3 }}
           >
-            <img
-              src="https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop"
-              alt="Yatharth Chauhan - Design Partner"
-              className="w-full h-full object-cover"
-            />
+            {!loading && user ? (
+              <img
+                src={user.avatar_url}
+                alt={`${user.name || user.login} - Design Partner`}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to a default avatar if image fails to load
+                  e.currentTarget.src = 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png';
+                }}
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 animate-pulse flex items-center justify-center">
+                <div className="text-gray-400 text-lg">Loading...</div>
+              </div>
+            )}
             {/* Gradient overlay */}
             <div className={`absolute inset-0 bg-gradient-to-t ${theme === 'blue' ? 'from-blue-500/20 via-transparent to-blue-400/10' : 'from-orange-500/20 via-transparent to-orange-400/10'}`}></div>
           </motion.div>

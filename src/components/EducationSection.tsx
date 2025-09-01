@@ -10,40 +10,40 @@ const EducationSection = () => {
   const education = [
     {
       id: 1,
-      degree: 'Master of Science',
-      field: 'Computer Science',
-      specialization: 'AI & Machine Learning',
-      school: 'Stanford University',
-      duration: '2017 - 2019',
-      location: 'Stanford, CA',
-      gpa: '3.9/4.0',
-      description: 'Specialized in deep learning, computer vision, and natural language processing.',
+      degree: 'Bachelor of Technology',
+      field: 'Computer Science and Engineering',
+      specialization: 'Artificial Intelligence & Data Science',
+      school: 'Indian Institute of Technology, Bombay',
+      duration: '2020 - 2024',
+      location: 'Mumbai, India',
+      gpa: '9.1/10',
+      description: 'Focused on machine learning, deep learning, and large-scale data systems.',
       achievements: [
-        'Summa Cum Laude graduate',
-        'Research published in NIPS and ICML',
-        'Teaching Assistant for CS229',
-        'Winner of Stanford AI Challenge 2019'
+        'Top 5% in class',
+        'GATE AIR 112',
+        'Google Summer of Code 2023',
+        'Published research in IEEE conference'
       ],
-      courses: ['Deep Learning', 'Computer Vision', 'NLP', 'Reinforcement Learning', 'Statistical Learning'],
+      courses: ['Machine Learning', 'Data Structures', 'Algorithms', 'Database Systems', 'Cloud Computing'],
       featured: true
     },
     {
       id: 2,
-      degree: 'Bachelor of Science',
-      field: 'Computer Engineering',
-      specialization: 'Software Engineering & Data Structures',
-      school: 'MIT',
-      duration: '2013 - 2017',
-      location: 'Cambridge, MA',
-      gpa: '3.8/4.0',
-      description: 'Strong foundation in computer science fundamentals and software engineering.',
+      degree: 'Senior Secondary (XII)',
+      field: 'Science (PCM with Computer Science)',
+      specialization: 'CBSE',
+      school: 'Delhi Public School, Noida',
+      duration: '2018 - 2020',
+      location: 'Noida, India',
+      gpa: '95.2%',
+      description: 'Excelled in Physics, Chemistry, Mathematics, and Computer Science.',
       achievements: [
-        'Dean\'s List for 6 semesters',
-        'President of Computer Science Society',
-        'Hackathon winner - MIT TechCrunch Disrupt',
-        'Undergraduate Research Award'
+        'School Topper in Computer Science',
+        'NTSE Scholar',
+        'KVPY Stage 2',
+        'Inter-school Coding Olympiad Winner'
       ],
-      courses: ['Algorithms', 'Data Structures', 'Software Engineering', 'Database Systems', 'Computer Networks'],
+      courses: ['Physics', 'Chemistry', 'Mathematics', 'Computer Science', 'English'],
       featured: false
     }
   ];
@@ -140,94 +140,34 @@ const EducationSection = () => {
         {education.map((edu, index) => (
           <motion.div
             key={edu.id}
-            className="group relative"
+            className="group"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.2 }}
           >
-            {/* Main Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 hover:border-gray-200 transition-all duration-300 overflow-hidden">
-              {/* Header */}
-              <div className="p-8 pb-6">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-12 h-12 ${
-                      theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'
-                    } rounded-xl flex items-center justify-center`}>
-                      <GraduationCap className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="flex items-center space-x-3">
-                        <h3 className="text-xl font-bold text-gray-900">{edu.degree}</h3>
-                        {edu.featured && (
-                          <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-                            FEATURED
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-gray-600">{edu.field}</p>
-                      <p className="text-sm text-gray-500">{edu.specialization}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <p className="font-bold text-gray-900 text-lg">{edu.school}</p>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500 mt-1">
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="w-3 h-3" />
-                        <span>{edu.duration}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="w-3 h-3" />
-                        <span>{edu.location}</span>
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-                        GPA: {edu.gpa}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-gray-600 mb-6">{edu.description}</p>
-
-                {/* Two Column Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Achievements */}
-                  <div>
-                    <div className="flex items-center space-x-2 mb-3">
-                      <Award className="w-4 h-4 text-yellow-500" />
-                      <span className="font-semibold text-gray-900">Achievements</span>
-                    </div>
-                    <div className="space-y-2">
-                      {edu.achievements.map((achievement, i) => (
-                        <div key={i} className="flex items-start space-x-2">
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                          <span className="text-sm text-gray-700">{achievement}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Key Courses */}
-                  <div>
-                    <div className="flex items-center space-x-2 mb-3">
-                      <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                      <span className="font-semibold text-gray-900">Key Courses</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {edu.courses.map((course) => (
-                        <span
-                          key={course}
-                          className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
-                        >
-                          {course}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+            <div className="bg-white rounded-2xl shadow p-6 flex flex-col gap-2 border border-gray-200">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-gray-900">{edu.degree}</h3>
+                {edu.featured && (
+                  <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">FEATURED</span>
+                )}
+              </div>
+              <div className="text-gray-700 font-medium">{edu.field}</div>
+              <div className="text-xs text-gray-500">{edu.specialization}</div>
+              <div className="flex flex-wrap gap-3 items-center text-xs text-gray-500">
+                <span className="font-bold text-gray-900">{edu.school}</span>
+                <span>{edu.duration}</span>
+                <span>{edu.location}</span>
+                <span className="bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full font-semibold">GPA: {edu.gpa}</span>
+              </div>
+              <div className="text-gray-600 text-sm truncate">{edu.description}</div>
+              <div className="flex flex-wrap gap-2 mt-1">
+                {edu.achievements.slice(0,2).map((achievement, i) => (
+                  <span key={i} className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs">{achievement}</span>
+                ))}
+                {edu.courses.slice(0,2).map((course, i) => (
+                  <span key={course} className="bg-orange-50 text-orange-700 px-2 py-0.5 rounded text-xs">{course}</span>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -291,7 +231,15 @@ const EducationSection = () => {
                 >
                   {/* Certification Card */}
                   <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 group-hover:border-gray-300 relative">
-                    
+                    {/* Badge Image Centered */}
+                    <div className="flex justify-center mb-4">
+                      <img
+                        src={cert.badgeImage}
+                        alt={cert.name + ' badge'}
+                        className="h-24 w-24 object-contain"
+                        loading="lazy"
+                      />
+                    </div>
                     {/* Content */}
                     <div className="space-y-4">
                       {/* Header with Icon and Level */}

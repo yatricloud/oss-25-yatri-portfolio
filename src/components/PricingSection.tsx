@@ -25,7 +25,7 @@ const PricingSection = () => {
         position: 'Founder at Pagapol',
         avatar: 'https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
         rating: 5,
-        content: 'Working with Tanvir was an absolute joy. His ability to capture and bring to life my ideas into visually was amazing for exceptional job.',
+        content: 'Working with Yatharth Chauhan was an absolute joy. His ability to capture and bring to life my ideas into visually was amazing for exceptional job.',
         verified: true
       },
       features: [

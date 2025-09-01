@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Brain, Code, Database, Cloud } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -12,36 +12,36 @@ const SkillsSection = () => {
       title: 'AI & Machine Learning',
       icon: Brain,
       skills: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'OpenAI GPT', 'Computer Vision', 'NLP'],
-      color: theme === 'blue' ? 'from-blue-500 to-blue-600' : 'from-purple-500 to-purple-600',
-      iconBg: theme === 'blue' ? 'bg-blue-500' : 'bg-purple-500',
-      borderColor: theme === 'blue' ? 'border-blue-500' : 'border-purple-500'
+      color: theme === 'blue' ? 'from-blue-500 to-blue-600' : 'from-orange-500 to-orange-600',
+      iconBg: theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500',
+      borderColor: theme === 'blue' ? 'border-blue-500' : 'border-orange-500'
     },
     {
       id: 2,
       title: 'Programming Languages',
       icon: Code,
       skills: ['Python', 'JavaScript', 'TypeScript', 'Java', 'C++', 'Go'],
-      color: theme === 'blue' ? 'from-green-500 to-green-600' : 'from-orange-500 to-orange-600',
-      iconBg: theme === 'blue' ? 'bg-green-500' : 'bg-orange-500',
-      borderColor: theme === 'blue' ? 'border-green-500' : 'border-orange-500'
+      color: theme === 'blue' ? 'from-blue-400 to-blue-600' : 'from-orange-400 to-orange-600',
+      iconBg: theme === 'blue' ? 'bg-blue-400' : 'bg-orange-400',
+      borderColor: theme === 'blue' ? 'border-blue-400' : 'border-orange-400'
     },
     {
       id: 3,
       title: 'Databases & Analytics',
       icon: Database,
       skills: ['PostgreSQL', 'MongoDB', 'Redis', 'Elasticsearch', 'Apache Spark', 'BigQuery'],
-      color: theme === 'blue' ? 'from-indigo-500 to-indigo-600' : 'from-red-500 to-red-600',
-      iconBg: theme === 'blue' ? 'bg-indigo-500' : 'bg-red-500',
-      borderColor: theme === 'blue' ? 'border-indigo-500' : 'border-red-500'
+      color: theme === 'blue' ? 'from-blue-300 to-blue-500' : 'from-orange-300 to-orange-500',
+      iconBg: theme === 'blue' ? 'bg-blue-300' : 'bg-orange-300',
+      borderColor: theme === 'blue' ? 'border-blue-300' : 'border-orange-300'
     },
     {
       id: 4,
       title: 'Cloud & DevOps',
       icon: Cloud,
       skills: ['AWS', 'Google Cloud', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD'],
-      color: theme === 'blue' ? 'from-cyan-500 to-cyan-600' : 'from-pink-500 to-pink-600',
-      iconBg: theme === 'blue' ? 'bg-cyan-500' : 'bg-pink-500',
-      borderColor: theme === 'blue' ? 'border-cyan-500' : 'border-pink-500'
+      color: theme === 'blue' ? 'from-blue-200 to-blue-400' : 'from-orange-200 to-orange-400',
+      iconBg: theme === 'blue' ? 'bg-blue-200' : 'bg-orange-200',
+      borderColor: theme === 'blue' ? 'border-blue-200' : 'border-orange-200'
     }
   ];
 
@@ -56,25 +56,25 @@ const SkillsSection = () => {
     },
   };
 
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: { opacity: 0, y: 50 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
+        ease: [0.42, 0, 0.58, 1], // cubic-bezier for easeInOut
       },
     },
   };
 
-  const skillVariants = {
+  const skillVariants: Variants = {
     hidden: { opacity: 0, scale: 0 },
     visible: {
       opacity: 1,
       scale: 1,
       transition: {
-        type: "spring",
+        type: 'spring' as const,
         stiffness: 260,
         damping: 20,
       },
@@ -129,11 +129,11 @@ const SkillsSection = () => {
                 className={`absolute inset-0 bg-gradient-to-r ${category.color} rounded-3xl opacity-0 group-hover:opacity-100`}
                 animate={{
                   background: [
-                    `linear-gradient(0deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                    `linear-gradient(90deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                    `linear-gradient(180deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                    `linear-gradient(270deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                    `linear-gradient(360deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`
+                    `linear-gradient(0deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                    `linear-gradient(90deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                    `linear-gradient(180deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                    `linear-gradient(270deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                    `linear-gradient(360deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`
                   ]
                 }}
                 transition={{
@@ -159,9 +159,6 @@ const SkillsSection = () => {
 
               {/* Inner Card */}
               <div className="relative bg-white rounded-3xl p-8 shadow-lg group-hover:shadow-2xl transition-all duration-500 overflow-hidden">
-                {/* Background Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                
                 {/* Content */}
                 <div className="relative z-10 space-y-6">
                   {/* Icon & Title */}
@@ -195,11 +192,11 @@ const SkillsSection = () => {
                             className={`absolute inset-0 bg-gradient-to-r ${category.color} rounded-xl opacity-0 group-hover/skill:opacity-100 group-hover/skill-border:opacity-100`}
                             animate={{
                               background: [
-                                `linear-gradient(45deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                                `linear-gradient(135deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                                `linear-gradient(225deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                                `linear-gradient(315deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`,
-                                `linear-gradient(405deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('green') ? '#10B981, #059669' : category.color.includes('indigo') ? '#8B5CF6, #7C3AED' : '#06B6D4, #0891B2'})`
+                                `linear-gradient(45deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                                `linear-gradient(135deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                                `linear-gradient(225deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                                `linear-gradient(315deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`,
+                                `linear-gradient(405deg, ${category.color.includes('blue') ? '#3B82F6, #1D4ED8' : category.color.includes('orange') ? '#F59E0B, #D97706' : '#06B6D4, #0891B2'})`
                               ]
                             }}
                             transition={{

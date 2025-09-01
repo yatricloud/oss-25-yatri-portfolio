@@ -67,7 +67,7 @@ const ExperienceSection = () => {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: [0.23, 1, 0.32, 1],
+        ease: [0.42, 0, 0.58, 1],
       },
     },
   };
@@ -107,33 +107,31 @@ const ExperienceSection = () => {
             key={exp.id}
             className="group relative"
             variants={cardVariants}
-            whileHover={{ y: -5 }}
+            whileHover={{ y: -8, scale: 1.02 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+            <div className={`bg-white rounded-3xl p-8 shadow-lg border-2 transition-all duration-300 ${exp.current ? 'border-blue-500 group-hover:border-blue-600' : 'border-gray-200 group-hover:border-gray-400'}`}> 
               {/* Header */}
               <div className="flex items-start justify-between mb-6">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-3">
-                    <h3 className="text-xl font-bold text-gray-900">{exp.position}</h3>
+                    <h3 className="text-2xl font-bold text-gray-900">{exp.position}</h3>
                     {exp.current && (
-                      <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span>Current</span>
-                      </div>
+                      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 animate-pulse">
+                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                        Current
+                      </span>
                     )}
                   </div>
-                  <p className="text-lg font-semibold text-gray-700">{exp.company}</p>
+                  <div className="text-lg font-semibold text-gray-700">{exp.company}</div>
                 </div>
-                
                 <motion.div
-                  className="w-10 h-10 bg-gray-100 group-hover:bg-gray-900 rounded-full flex items-center justify-center transition-all duration-300"
+                  className="w-10 h-10 bg-gray-100 group-hover:bg-blue-500 rounded-full flex items-center justify-center transition-all duration-300"
                   whileHover={{ rotate: 45 }}
                 >
                   <ArrowUpRight className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors duration-300" />
                 </motion.div>
               </div>
-
               {/* Meta Info */}
               <div className="flex items-center space-x-6 text-gray-600 mb-4">
                 <div className="flex items-center space-x-2">
@@ -145,23 +143,20 @@ const ExperienceSection = () => {
                   <span className="text-sm font-medium">{exp.location}</span>
                 </div>
               </div>
-
               {/* Description */}
               <p className="text-gray-600 leading-relaxed mb-6">{exp.description}</p>
-
               {/* Achievements */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <ul className="flex flex-wrap gap-3">
                 {exp.achievements.map((achievement, i) => (
-                  <div
+                  <li
                     key={i}
-                    className="bg-gray-50 rounded-xl p-4 text-center group-hover:bg-gray-100 transition-colors duration-300"
+                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm font-medium text-gray-900 group-hover:border-blue-200 transition-colors duration-300"
                   >
-                    <div className="text-sm font-semibold text-gray-900">{achievement}</div>
-                  </div>
+                    {achievement}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
-
             {/* Timeline Line */}
             {index < experiences.length - 1 && (
               <div className="absolute left-1/2 transform -translate-x-1/2 w-px h-8 bg-gray-200 mt-4"></div>

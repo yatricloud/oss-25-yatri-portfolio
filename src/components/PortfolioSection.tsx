@@ -13,7 +13,7 @@ const PortfolioSection = () => {
       category: 'Bentofolio',
       year: '2025©',
       description: 'Bentofolio Collection',
-      bgGradient: 'from-orange-900 via-orange-600 to-orange-400',
+      bgGradient: theme === 'blue' ? 'from-blue-500 via-blue-600 to-blue-400' : 'from-orange-500 via-orange-600 to-orange-400',
       textColor: 'text-white',
       image: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
     },
@@ -23,7 +23,7 @@ const PortfolioSection = () => {
       category: 'Branding',
       year: '2025©',
       description: 'Fivestar Brand Identity',
-      bgGradient: 'from-red-600 via-red-500 to-orange-400',
+      bgGradient: theme === 'blue' ? 'from-blue-400 via-blue-500 to-blue-600' : 'from-orange-400 via-orange-500 to-orange-600',
       textColor: 'text-white',
       image: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
     },
@@ -47,7 +47,7 @@ const PortfolioSection = () => {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
+        ease: 'easeInOut',
       },
     },
   };
@@ -100,18 +100,14 @@ const PortfolioSection = () => {
             transition={{ duration: 0.3 }}
           >
             {/* Project Card */}
-            <div className={`relative rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br ${project.bgGradient} h-96 md:h-[500px]`}>
-              {/* Background Pattern/Image */}
-              <div className="absolute inset-0 opacity-20">
-                <div className="w-full h-full bg-gradient-to-br from-transparent via-white/10 to-white/20"></div>
-              </div>
-
+            <div className="relative bg-white rounded-3xl p-8 shadow-lg group-hover:shadow-2xl transition-all duration-500 overflow-hidden">
+              {/* Remove background gradient */}
               {/* Content */}
-              <div className="relative z-10 p-8 h-full flex flex-col justify-between">
+              <div className="relative z-10 space-y-6">
                 {/* Top Section */}
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
-                    <div className="text-white/80 text-sm font-medium">
+                    <div className="text-gray-600 text-sm font-medium">
                       {project.year}
                     </div>
                     <h3 className={`text-4xl md:text-5xl font-bold ${project.textColor} leading-tight`}>
@@ -129,16 +125,16 @@ const PortfolioSection = () => {
                 <div className="flex-1 flex items-center justify-center">
                   {index === 0 ? (
                     <div className="text-center">
-                      <div className="border border-white/30 rounded-full px-6 py-2 text-white/80 text-sm font-medium mb-8">
+                      <div className="border border-gray-300 rounded-full px-6 py-2 text-gray-600 text-sm font-medium mb-8">
                         {project.description}
                       </div>
                     </div>
                   ) : (
                     <div className="text-center">
-                      <div className="text-6xl md:text-7xl font-bold text-white mb-4">
+                      <div className="text-6xl md:text-7xl font-bold text-gray-900 mb-4">
                         ⭐ Fivestar
                       </div>
-                      <div className="border border-white/30 rounded-full px-6 py-2 text-white/80 text-sm font-medium">
+                      <div className="border border-gray-300 rounded-full px-6 py-2 text-gray-600 text-sm font-medium">
                         {project.description}
                       </div>
                     </div>
@@ -146,7 +142,7 @@ const PortfolioSection = () => {
                 </div>
 
                 {/* Bottom Section */}
-                <div className="text-white/60 text-sm">
+                <div className="text-gray-600 text-sm">
                   {project.year}
                 </div>
               </div>
