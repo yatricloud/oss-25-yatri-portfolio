@@ -36,6 +36,7 @@ const AdminDashboard = () => {
   // Deployment states
   const [deployments, setDeployments] = useState<DeploymentStatus[]>([]);
   const [isDeploying, setIsDeploying] = useState(false);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
   const [deploymentError, setDeploymentError] = useState<string | null>(null);
   const [databaseReady, setDatabaseReady] = useState<boolean | null>(null);
 
@@ -536,18 +537,50 @@ const AdminDashboard = () => {
       return;
     }
     
+    setIsDeletingAll(true);
+    setError('');
+    
     try {
-      const { error } = await supabase
+      console.log('Deleting all deployments for user:', user.id);
+      
+      // First, let's check how many deployments exist
+      const { data: existingDeployments, error: fetchError } = await supabase
+        .from('deployments')
+        .select('id')
+        .eq('user_id', user.id);
+      
+      if (fetchError) {
+        console.error('Error fetching existing deployments:', fetchError);
+        throw fetchError;
+      }
+      
+      console.log('Found deployments to delete:', existingDeployments?.length || 0);
+      
+      if (!existingDeployments || existingDeployments.length === 0) {
+        setSuccess('No deployments found to delete.');
+        return;
+      }
+      
+      const { error, count } = await supabase
         .from('deployments')
         .delete()
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Delete error:', error);
+        throw error;
+      }
       
-      setDeployments([]);
-      setSuccess('All deployment history has been deleted.');
+      console.log('Deleted deployments count:', count);
+      
+      // Refresh deployments from database to ensure UI is updated
+      await fetchDeployments();
+      setSuccess(`All deployment history has been deleted. (${count || existingDeployments.length} deployments removed)`);
     } catch (error: any) {
+      console.error('Error deleting deployments:', error);
       setError(error.message || 'Failed to delete deployments');
+    } finally {
+      setIsDeletingAll(false);
     }
   };
 
@@ -679,14 +712,14 @@ const AdminDashboard = () => {
                   >
                     Refresh Data
                   </motion.button>
-                  <motion.button
-                    onClick={() => setShowForm(true)}
+          <motion.button
+            onClick={() => setShowForm(true)}
                     className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
                     Add GitHub URL
-                  </motion.button>
+          </motion.button>
                 </div>
         </div>
 
@@ -919,13 +952,18 @@ const AdminDashboard = () => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-md font-medium text-gray-900">Deployment History</h3>
-                <motion.button
-                  onClick={handleDeleteAllDeployments}
-                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Delete All
+                    <motion.button
+                      onClick={handleDeleteAllDeployments}
+                      disabled={isDeletingAll}
+                      className={`px-4 py-2 text-white rounded-lg text-sm font-medium transition-colors ${
+                        isDeletingAll 
+                          ? 'bg-gray-400 cursor-not-allowed' 
+                          : 'bg-red-500 hover:bg-red-600'
+                      }`}
+                      whileHover={!isDeletingAll ? { scale: 1.05 } : {}}
+                      whileTap={!isDeletingAll ? { scale: 0.95 } : {}}
+                    >
+                      {isDeletingAll ? 'Deleting...' : 'Delete All'}
                       </motion.button>
               </div>
               {deployments.map((deployment) => (
