@@ -4,7 +4,7 @@ import { Video, Users, FileText, CheckCircle, Brain, BarChart3, Target, Settings
 import { useTheme } from '../contexts/ThemeContext';
 
 const WorkRoadmapSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
 
   const steps = [
     {
@@ -110,7 +110,7 @@ const WorkRoadmapSection = () => {
           className="flex items-center justify-center space-x-2"
           variants={headerVariants}
         >
-          <div className={`w-2 h-2 ${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} rounded-full`}></div>
+          <div className={`w-2 h-2 ${colors.indicatorDot} rounded-full`}></div>
           <span className="text-gray-600 font-medium uppercase tracking-wide text-sm">
             WORK ROADMAP
           </span>
@@ -259,7 +259,7 @@ const WorkRoadmapSection = () => {
                       variants={iconVariants}
                       whileHover={{ scale: 1.1, rotate: 10 }}
                     >
-                      <Brain className={`w-8 h-8 ${theme === 'blue' ? 'text-blue-500' : 'text-orange-500'}`} />
+                      <Brain className={`w-8 h-8 ${colors.primaryText}`} />
                     </motion.div>
 
                     {/* Bottom Tags */}

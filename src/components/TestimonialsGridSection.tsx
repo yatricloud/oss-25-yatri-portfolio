@@ -4,7 +4,7 @@ import { Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const TestimonialsGridSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
 
   const testimonials = [
     {
@@ -152,7 +152,7 @@ const TestimonialsGridSection = () => {
             </div>
 
             {/* Hover Effect Background */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${theme === 'blue' ? 'from-blue-50 to-blue-100' : 'from-orange-50 to-orange-100'} opacity-0 hover:opacity-100 transition-opacity duration-300 -z-10`}></div>
+            <div className={`absolute inset-0 bg-gradient-to-br ${colors.gradientSoft} opacity-0 hover:opacity-100 transition-opacity duration-300 -z-10`}></div>
           </motion.div>
         ))}
       </motion.div>

@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const PortfolioSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
 
   const projects = [
     {
@@ -13,7 +13,7 @@ const PortfolioSection = () => {
       category: 'Bentofolio',
       year: '2025©',
       description: 'Bentofolio Collection',
-      bgGradient: theme === 'blue' ? 'from-blue-500 via-blue-600 to-blue-400' : 'from-orange-500 via-orange-600 to-orange-400',
+      bgGradient: `${colors.gradientStrong.replace('from-', 'from-').replace(' to-', ' via-')}`,
       textColor: 'text-white',
       image: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
     },
@@ -23,7 +23,7 @@ const PortfolioSection = () => {
       category: 'Branding',
       year: '2025©',
       description: 'Fivestar Brand Identity',
-      bgGradient: theme === 'blue' ? 'from-blue-400 via-blue-500 to-blue-600' : 'from-orange-400 via-orange-500 to-orange-600',
+      bgGradient: `${colors.primaryBg400.replace('bg-', 'from-')} via-${colors.primaryBg.replace('bg-', '')} to-${colors.primaryBg.replace('bg-', '')}`,
       textColor: 'text-white',
       image: 'https://images.pexels.com/photos/1029604/pexels-photo-1029604.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&fit=crop',
     },
@@ -63,7 +63,7 @@ const PortfolioSection = () => {
       >
         {/* Feature Project Indicator */}
         <div className="flex items-center justify-center space-x-2">
-          <div className={`w-2 h-2 ${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} rounded-full`}></div>
+          <div className={`w-2 h-2 ${colors.indicatorDot} rounded-full`}></div>
           <span className="text-gray-600 font-medium uppercase tracking-wide text-sm">
             FEATURE PROJECT
           </span>
@@ -159,13 +159,13 @@ const PortfolioSection = () => {
               transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
             >
               <div className="flex items-center space-x-3">
-                <div className={`w-2 h-2 ${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} rounded-full`}></div>
+                <div className={`w-2 h-2 ${colors.indicatorDot} rounded-full`}></div>
                 <span className="font-bold text-gray-900">{project.title}</span>
                 <span className="text-gray-600">{project.category}</span>
               </div>
               
               <motion.div
-                className={`w-10 h-10 ${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} rounded-full flex items-center justify-center text-white cursor-pointer`}
+                className={`w-10 h-10 ${colors.primaryBg} rounded-full flex items-center justify-center text-white cursor-pointer`}
                 whileHover={{ scale: 1.1, rotate: 45 }}
                 transition={{ duration: 0.2 }}
               >

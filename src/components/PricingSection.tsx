@@ -4,7 +4,7 @@ import { Check, ArrowRight, Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const PricingSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
 
   const plans = [
     {

@@ -2,9 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, ArrowUpRight } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useProfile } from '../contexts/ProfileContext';
 
 const ExperienceSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
+  const { profile } = useProfile();
 
   const experiences = [
     {
@@ -82,7 +84,7 @@ const ExperienceSection = () => {
         transition={{ duration: 0.6 }}
       >
         <div className="flex items-center justify-center space-x-2">
-          <div className={`w-2 h-2 ${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} rounded-full`}></div>
+          <div className={`w-2 h-2 ${colors.indicatorDot} rounded-full`}></div>
           <span className="text-gray-600 font-medium uppercase tracking-wide text-sm">
             PROFESSIONAL JOURNEY
           </span>
@@ -102,9 +104,9 @@ const ExperienceSection = () => {
         initial="hidden"
         animate="visible"
       >
-        {experiences.map((exp, index) => (
+        {(profile?.experiences || []).map((exp, index) => (
           <motion.div
-            key={exp.id}
+            key={`${exp.company}-${index}`}
             className="group relative"
             variants={cardVariants}
             whileHover={{ y: -8, scale: 1.02 }}
@@ -136,7 +138,7 @@ const ExperienceSection = () => {
               <div className="flex items-center space-x-6 text-gray-600 mb-4">
                 <div className="flex items-center space-x-2">
                   <Calendar className="w-4 h-4" />
-                  <span className="text-sm font-medium">{exp.duration}</span>
+                  <span className="text-sm font-medium">{exp.startDate || ''}{exp.endDate ? ` - ${exp.endDate}` : ''}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4" />
@@ -144,10 +146,10 @@ const ExperienceSection = () => {
                 </div>
               </div>
               {/* Description */}
-              <p className="text-gray-600 leading-relaxed mb-6">{exp.description}</p>
+              {exp.summary && <p className="text-gray-600 leading-relaxed mb-6">{exp.summary}</p>}
               {/* Achievements */}
               <ul className="flex flex-wrap gap-3">
-                {exp.achievements.map((achievement, i) => (
+                {(exp.highlights || []).map((achievement, i) => (
                   <li
                     key={i}
                     className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm font-medium text-gray-900 group-hover:border-blue-200 transition-colors duration-300"

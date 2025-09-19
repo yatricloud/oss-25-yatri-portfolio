@@ -7,7 +7,7 @@ import { ProjectsSkeleton } from './ProjectSkeleton';
 import { ProcessedProject } from '../services/githubService';
 
 const ProjectsSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const {
     projects,
     loading,

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface FAQItem {
   question: string;
@@ -9,28 +10,29 @@ interface FAQItem {
 
 const faqData: FAQItem[] = [
   {
-    question: "How long does it take to complete?",
-    answer: "Project timelines vary depending on scope and complexity. Most projects range from 2-12 weeks, with smaller projects completing faster and larger enterprise solutions taking longer."
+    question: "What type of roles are you looking for?",
+    answer: "I'm open to full-time, part-time, and contract opportunities in software development, AI/ML engineering, DevOps, and technical leadership roles. I'm particularly interested in companies working with cutting-edge technologies and innovative solutions."
   },
   {
-    question: "What if I need updates after the site goes live?",
-    answer: "We offer ongoing maintenance and support packages to ensure your project continues to perform optimally after launch. Updates and modifications can be handled through our support system."
+    question: "Are you available for remote work?",
+    answer: "Yes, I'm fully comfortable with remote work and have extensive experience working with distributed teams. I'm also open to hybrid arrangements and can travel for important meetings or team events when needed."
   },
   {
-    question: "Can I edit the landing page after it's delivered?",
-    answer: "Yes, absolutely! We provide you with full access and documentation so you can make updates. We also offer training sessions to help you manage your site effectively."
+    question: "What's your preferred tech stack?",
+    answer: "I work with a wide range of technologies including React, Node.js, Python, TypeScript, Azure, AWS, Docker, and various AI/ML frameworks. I'm always learning new technologies and adapt quickly to different tech stacks based on project requirements."
   },
   {
-    question: "Can Framer handle complex animations?",
-    answer: "Yes, Framer is excellent for complex animations and interactions. We can create sophisticated micro-interactions, page transitions, and custom animations that enhance user experience."
+    question: "Do you have experience with team leadership?",
+    answer: "Yes, I have experience leading development teams and mentoring junior developers. I've successfully managed projects from conception to deployment and enjoy collaborating with cross-functional teams to deliver high-quality solutions."
   },
   {
-    question: "Will you provide Domain and Hosting?",
-    answer: "We can help you set up domain and hosting, or work with your existing setup. We'll guide you through the best options based on your specific needs and budget."
+    question: "What's your availability for new opportunities?",
+    answer: "I'm currently available for new opportunities and can start immediately. I'm looking for roles where I can make a meaningful impact and continue growing as a developer and technical leader."
   }
 ];
 
 export default function FAQSection() {
+  const { colors } = useTheme();
   const [openItems, setOpenItems] = useState<number[]>([]);
 
   const toggleItem = (index: number) => {
@@ -91,7 +93,7 @@ export default function FAQSection() {
             variants={headerVariants}
           >
             <div className="bg-white border border-gray-200 rounded-full px-4 py-2 flex items-center space-x-2">
-              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+              <div className={`w-2 h-2 ${colors.indicatorDot} rounded-full`}></div>
               <span className="text-gray-600 font-medium text-sm">QUESTION & ANSWER</span>
             </div>
           </motion.div>
@@ -99,14 +101,14 @@ export default function FAQSection() {
           {/* Main Headline */}
           <motion.div variants={headerVariants}>
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
-              Find Quick Answers to
+              Frequently Asked
               <br />
-              Common Questions
+              Questions
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Before we start, it's important to answer these questions to avoid any confusion
+              Here are some common questions about my background, availability, and work preferences.
               <br />
-              later. If you have any other questions, just let me know!
+              Feel free to reach out if you have any other questions!
             </p>
           </motion.div>
         </motion.div>
@@ -129,7 +131,7 @@ export default function FAQSection() {
                 className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
               >
                 <div className="flex items-center space-x-4">
-                  <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className={`w-8 h-8 ${colors.primaryBg} rounded-full flex items-center justify-center flex-shrink-0`}>
                     {openItems.includes(index) ? (
                       <Minus className="w-4 h-4 text-white" />
                     ) : (

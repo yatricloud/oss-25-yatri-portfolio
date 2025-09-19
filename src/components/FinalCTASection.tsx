@@ -4,7 +4,7 @@ import { MessageCircle, Linkedin, Send, Mail } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const FinalCTASection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
 
   const tools = [
     {
@@ -195,9 +195,7 @@ const FinalCTASection = () => {
       >
         <motion.button
           className={`bg-gradient-to-r ${
-            theme === 'blue' 
-              ? 'from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700' 
-              : 'from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700'
+            `${colors.gradientStrong} ${colors.gradientStrongHover}`
           } text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center space-x-3`}
           whileHover={{ scale: 1.05, y: -3 }}
           whileTap={{ scale: 0.95 }}

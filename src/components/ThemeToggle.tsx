@@ -4,23 +4,10 @@ import { Palette, Check } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const ThemeToggle = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme, availableThemes } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
 
-  const colorPalettes = [
-    {
-      id: 'blue',
-      name: 'Ocean Blue',
-      colors: ['#3B82F6', '#1D4ED8', '#1E40AF', '#1E3A8A'],
-      gradient: 'from-blue-400 via-blue-500 to-blue-600'
-    },
-    {
-      id: 'orange',
-      name: 'Sunset Orange',
-      colors: ['#F97316', '#EA580C', '#DC2626', '#B91C1C'],
-      gradient: 'from-orange-400 via-orange-500 to-red-500'
-    }
-  ];
+  const colorPalettes = availableThemes;
 
   const togglePalette = () => {
     setIsOpen(!isOpen);
@@ -28,7 +15,7 @@ const ThemeToggle = () => {
 
   const selectPalette = (paletteId: string) => {
     if (paletteId !== theme) {
-      toggleTheme();
+      setTheme(paletteId as any);
     }
     setIsOpen(false);
   };
@@ -58,9 +45,8 @@ const ThemeToggle = () => {
           
           {/* Active Theme Indicator */}
           <div
-            className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full ${
-              theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'
-            } border-2 border-white shadow-lg`}
+            className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-lg`}
+            style={{ background: 'currentColor' }}
           />
         </div>
       </motion.button>

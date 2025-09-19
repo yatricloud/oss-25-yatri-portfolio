@@ -1,33 +1,37 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { User, Heart, ExternalLink } from 'lucide-react';
+import { motion, Variants } from 'framer-motion';
+import { User, ExternalLink } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useProfile } from '../contexts/ProfileContext';
+import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const Footer = () => {
   const { theme } = useTheme();
+  const { profile } = useProfile();
+  const { user } = useGitHubProfile();
 
+  // Dynamic footer links based on profile data
   const footerLinks = {
     services: [
-      { name: 'Website Design', href: '#' },
-      { name: 'Framer Development', href: '#' },
-      { name: 'Brand Design', href: '#' },
-      { name: 'Logo Design', href: '#' }
+      { name: 'AI/ML Development', href: '#projects' },
+      { name: 'Web Development', href: '#projects' },
+      { name: 'Cloud Solutions', href: '#projects' },
+      { name: 'Technical Consulting', href: '#contact' }
     ],
     company: [
-      { name: 'About', href: '#' },
-      { name: 'Portfolio', href: '#' },
-      { name: 'Process', href: '#' },
-      { name: 'Reviews', href: '#' }
+      { name: 'About', href: '#about' },
+      { name: 'Experience', href: '#experience' },
+      { name: 'Education', href: '#education' },
+      { name: 'Skills', href: '#skills' }
     ],
     resources: [
-      { name: 'FAQ', href: '#' },
-      { name: 'Pricing', href: '#' },
-      { name: 'Contact', href: '#' },
-      { name: 'Book Meeting', href: '#' }
+      { name: 'FAQ', href: '#faq' },
+      { name: 'Contact', href: '#contact' },
+      { name: 'GitHub', href: `https://github.com/${user?.login}` || '#' },
+      { name: 'LinkedIn', href: profile?.linkedin || '#' }
     ]
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -38,26 +42,26 @@ const Footer = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
-        ease: [0.23, 1, 0.32, 1],
+        ease: "easeOut",
       },
     },
   };
 
-  const logoVariants = {
+  const logoVariants: Variants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: {
       opacity: 1,
       scale: 1,
       transition: {
         duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
+        ease: "easeOut",
       },
     },
   };
@@ -80,17 +84,25 @@ const Footer = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              <div className={`w-12 h-12 bg-gradient-to-br ${
-                theme === 'blue' 
-                  ? 'from-blue-500 to-blue-600' 
-                  : 'from-orange-500 to-red-500'
-              } rounded-full flex items-center justify-center`}>
-                <User className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-2xl font-bold">Yatharth Chauhan</span>
+              {user?.avatar_url ? (
+                <img
+                  src={user.avatar_url}
+                  alt={profile?.fullName || user.name || 'Profile'}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+              ) : (
+                <div className={`w-12 h-12 bg-gradient-to-br rounded-full flex items-center justify-center ${
+                  theme === 'blue' ? 'from-blue-500 to-blue-600' : theme === 'orange' ? 'from-orange-500 to-red-500' : theme === 'green' ? 'from-green-500 to-green-600' : theme === 'purple' ? 'from-purple-500 to-purple-600' : 'from-rose-500 to-rose-600'
+                }`}>
+                  <User className="w-7 h-7 text-white" />
+                </div>
+              )}
+              <span className="text-2xl font-bold">
+                {profile?.fullName || user?.name || 'Yatharth Chauhan'}
+              </span>
             </motion.div>
             <p className="text-gray-400 leading-relaxed mb-6">
-              Official Website Design Expert helping founders create high-converting websites with exceptional design and user experience.
+              {profile?.summary || user?.bio || 'Microsoft Azure Solution Architect & DevOps Expert helping businesses build intelligent, scalable solutions with cutting-edge technologies.'}
             </p>
             <div className="flex items-center space-x-2 text-gray-400">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -122,7 +134,7 @@ const Footer = () => {
 
           {/* Company Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-bold mb-6">Company</h3>
+            <h3 className="text-lg font-bold mb-6">Profile</h3>
             <ul className="space-y-3">
               {footerLinks.company.map((link, index) => (
                 <motion.li key={link.name}>
@@ -144,12 +156,14 @@ const Footer = () => {
 
           {/* Resources Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-bold mb-6">Resources</h3>
+            <h3 className="text-lg font-bold mb-6">Connect</h3>
             <ul className="space-y-3">
               {footerLinks.resources.map((link, index) => (
                 <motion.li key={link.name}>
                   <motion.a
                     href={link.href}
+                    target={link.name === 'GitHub' || link.name === 'LinkedIn' ? '_blank' : undefined}
+                    rel={link.name === 'GitHub' || link.name === 'LinkedIn' ? 'noopener noreferrer' : undefined}
                     className="text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -180,14 +194,26 @@ const Footer = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 1.4 }}
             >
-              <span>© 2025 Tanvir. Made with</span>
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
+              <span>© 2025 Copyright </span>
+              <motion.a
+                href="https://yatricloud.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-gray-300 transition-colors duration-200"
+                whileHover={{ y: -1 }}
               >
-                <Heart className="w-4 h-4 text-red-500 fill-current" />
-              </motion.div>
-              <span>with passion</span>
+                Yatri Cloud
+              </motion.a>
+              <span> and Designed by </span>
+              <motion.a
+                href="https://uimitra.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-gray-300 transition-colors duration-200"
+                whileHover={{ y: -1 }}
+              >
+                Uimitra
+              </motion.a>
             </motion.div>
 
             <motion.div
@@ -197,26 +223,26 @@ const Footer = () => {
               transition={{ duration: 0.6, delay: 1.6 }}
             >
               <motion.a
-                href="#"
+                href={profile?.email ? `mailto:${profile.email}` : '#'}
                 className="hover:text-white transition-colors duration-200"
                 whileHover={{ y: -2 }}
               >
-                Privacy Policy
+                Email
               </motion.a>
               <motion.a
-                href="#"
+                href={profile?.phone ? `tel:${profile.phone}` : '#'}
                 className="hover:text-white transition-colors duration-200"
                 whileHover={{ y: -2 }}
               >
-                Terms of Service
+                Phone
               </motion.a>
-              <motion.a
-                href="#"
-                className="hover:text-white transition-colors duration-200"
-                whileHover={{ y: -2 }}
-              >
-                Cookie Policy
-              </motion.a>
+                <motion.a
+                  href={profile?.location || user?.location ? '#' : '#'}
+                  className="hover:text-white transition-colors duration-200"
+                  whileHover={{ y: -2 }}
+                >
+                  {profile?.location || user?.location || 'Remote'}
+                </motion.a>
             </motion.div>
           </div>
         </motion.div>

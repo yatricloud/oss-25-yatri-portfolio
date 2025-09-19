@@ -57,7 +57,7 @@ supabase db reset
 
 2. **Navigate to the admin panel**:
    ```
-   http://localhost:5173/admin
+   http://localhost:5173/login
    ```
 
 3. **Login with your admin credentials**
@@ -114,7 +114,7 @@ supabase db reset
 ## 🚀 Usage
 
 ### Adding GitHub URLs:
-1. Login to `/admin`
+1. Login to `/login`
 2. Click "Add GitHub URL"
 3. Enter the GitHub repository URL
 4. Add optional description
@@ -165,5 +165,5 @@ The admin panel will automatically:
 
 ---
 
-**Admin Panel URL**: `http://localhost:5173/admin` (or your deployed domain)
+**Admin Panel URL**: `http://localhost:5173/login` (or your deployed domain)
 **Supabase Project**: https://supabase.com/dashboard/project/fvtrienulcbocuzmtsll

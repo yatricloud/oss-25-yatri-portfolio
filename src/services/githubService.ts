@@ -114,15 +114,37 @@ const CATEGORY_MAPPINGS: { [key: string]: string } = {
   'default': 'Other'
 };
 
+import { supabase, SUPABASE_AVAILABLE } from '../lib/supabase';
+
 export class GitHubService {
   private static readonly GITHUB_API_BASE = 'https://api.github.com';
-  private static readonly USERNAME = 'YatharthChauhan2362';
+  private static readonly DEFAULT_USERNAME = 'YatharthChauhan2362';
+
+  private static async getConfiguredUsername(): Promise<string> {
+    try {
+      if (!SUPABASE_AVAILABLE || !supabase) {
+        return this.DEFAULT_USERNAME;
+      }
+      const { data, error } = await supabase
+        .from('github_urls')
+        .select('url, updated_at, created_at')
+        .order('updated_at', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error || !data?.url) return this.DEFAULT_USERNAME;
+      const url = data.url as string;
+      const match = url.match(/github\.com\/(\w[\w-]+)/i);
+      return match?.[1] || this.DEFAULT_USERNAME;
+    } catch {
+      return this.DEFAULT_USERNAME;
+    }
+  }
 
   static async fetchUserProfile(): Promise<GitHubUser | null> {
     try {
-      const response = await fetch(
-        `${this.GITHUB_API_BASE}/users/${this.USERNAME}`
-      );
+      const username = await this.getConfiguredUsername();
+      const response = await fetch(`${this.GITHUB_API_BASE}/users/${username}`);
       
       if (!response.ok) {
         throw new Error(`GitHub API error: ${response.status}`);
@@ -138,9 +160,8 @@ export class GitHubService {
 
   static async fetchUserRepositories(): Promise<GitHubRepo[]> {
     try {
-      const response = await fetch(
-        `${this.GITHUB_API_BASE}/users/${this.USERNAME}/repos?sort=updated&per_page=100&type=public`
-      );
+      const username = await this.getConfiguredUsername();
+      const response = await fetch(`${this.GITHUB_API_BASE}/users/${username}/repos?sort=updated&per_page=100&type=public`);
       
       if (!response.ok) {
         throw new Error(`GitHub API error: ${response.status}`);

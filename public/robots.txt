@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://yatharthchauhan.com/sitemap.xml
+
+# Disallow login panel from search engines
+Disallow: /login
+
+# Allow all other content
+Allow: /#about
+Allow: /#skills
+Allow: /#projects
+Allow: /#experience
+Allow: /#education
+Allow: /#contact
+Allow: /#faq

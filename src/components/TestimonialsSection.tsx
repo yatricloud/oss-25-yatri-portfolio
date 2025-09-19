@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const TestimonialsSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   const testimonials = [
@@ -109,8 +109,8 @@ const TestimonialsSection = () => {
           className="flex items-center justify-center"
           variants={headerVariants}
         >
-          <div className="bg-white border border-gray-200 rounded-full px-4 py-2 flex items-center space-x-2">
-            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+              <div className="bg-white border border-gray-200 rounded-full px-4 py-2 flex items-center space-x-2">
+            <div className={`w-2 h-2 ${colors.indicatorDot} rounded-full`}></div>
             <span className="text-gray-600 font-medium text-sm">TRUSTED BY FOUNDERS</span>
           </div>
         </motion.div>
@@ -151,7 +151,7 @@ const TestimonialsSection = () => {
               exit="exit"
             >
               {/* Project Image Side */}
-              <div className="relative bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 p-8 flex items-center justify-center">
+              <div className="relative bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-8 flex items-center justify-center">
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-blue-500/20 to-blue-600/20"></div>
                 
@@ -236,7 +236,7 @@ const TestimonialsSection = () => {
                         alt={current.author}
                         className="w-16 h-16 rounded-full object-cover"
                       />
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <div className={`absolute -bottom-1 -right-1 w-6 h-6 ${colors.primaryBg} rounded-full flex items-center justify-center`}>
                         <div className="w-3 h-3 bg-white rounded-full"></div>
                       </div>
                     </div>
@@ -246,7 +246,7 @@ const TestimonialsSection = () => {
                     </div>
                     <div className="flex items-center space-x-1">
                       {[...Array(current.rating)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 text-orange-500 fill-current" />
+                        <Star key={i} className={`w-5 h-5 ${colors.primaryText} fill-current`} />
                       ))}
                     </div>
                   </div>
@@ -281,7 +281,7 @@ const TestimonialsSection = () => {
             <button
               key={index}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentTestimonial ? 'bg-orange-500 scale-125' : 'bg-gray-300 hover:bg-gray-400'
+                index === currentTestimonial ? `${colors.indicatorDot} scale-125` : 'bg-gray-300 hover:bg-gray-400'
               }`}
               onClick={() => setCurrentTestimonial(index)}
             />

@@ -261,7 +261,7 @@ const BookingSection = () => {
                   className={`
                     aspect-square flex items-center justify-center text-sm font-medium rounded-lg transition-all duration-200
                     ${day.date === selectedDate 
-                      ? `${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} text-white shadow-lg`
+                      ? `${colors.primaryBg} text-white shadow-lg`
                       : day.available 
                         ? 'hover:bg-gray-100 text-gray-900' 
                         : 'text-gray-300 cursor-not-allowed'
@@ -315,7 +315,7 @@ const BookingSection = () => {
                   className={`
                     w-full p-3 text-left rounded-xl font-medium transition-all duration-200
                     ${selectedTime === time 
-                      ? `${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} text-white shadow-lg`
+                      ? `${colors.primaryBg} text-white shadow-lg`
                       : 'bg-white hover:bg-gray-100 text-gray-900 border border-gray-200'
                     }
                   `}

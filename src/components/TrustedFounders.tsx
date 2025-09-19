@@ -4,7 +4,7 @@ import { Star } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 const TrustedFounders = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
 
   const founders = [
     { id: 1, image: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop' },
@@ -69,7 +69,7 @@ const TrustedFounders = () => {
         transition={{ duration: 0.6, delay: 0.8 }}
       >
         <Star className={`w-5 h-5 ${
-          theme === 'blue' ? 'text-blue-500' : 'text-yellow-500'
+          colors.primaryText
         } fill-current`} />
         <span className="font-medium">Trusted By 49+ Founders</span>
       </motion.div>

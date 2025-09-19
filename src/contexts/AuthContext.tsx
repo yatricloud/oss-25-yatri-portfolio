@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { supabase, SUPABASE_AVAILABLE } from '../lib/supabase';
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
 }
@@ -28,21 +29,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Get initial session
+    if (!SUPABASE_AVAILABLE || !supabase) {
+      setLoading(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       checkAdminStatus(session?.user);
+      if (session?.user) {
+        ensureAdminRecord(session.user).catch(() => {});
+      }
       setLoading(false);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       checkAdminStatus(session?.user);
+      if (session?.user) {
+        ensureAdminRecord(session.user).catch(() => {});
+      }
       setLoading(false);
     });
 
@@ -56,6 +66,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      if (!SUPABASE_AVAILABLE || !supabase) {
+        setIsAdmin(false);
+        return;
+      }
       const { data, error } = await supabase
         .from('admin_users')
         .select('*')
@@ -76,6 +90,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signIn = async (email: string, password: string) => {
+    if (!SUPABASE_AVAILABLE || !supabase) {
+      return { error: new Error('Auth is not configured') };
+    }
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -83,8 +100,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
+  const signUp = async (email: string, password: string) => {
+    if (!SUPABASE_AVAILABLE || !supabase) {
+      return { error: new Error('Auth is not configured') };
+    }
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: window.location.origin + '/login'
+      }
+    });
+    // If we have a session or user, attempt to create admin record immediately
+    const currentUser = data?.user ?? (await supabase.auth.getUser()).data.user;
+    if (currentUser) {
+      try { await ensureAdminRecord(currentUser); } catch {}
+    }
+    return { error };
+  };
+
   const signOut = async () => {
+    if (!SUPABASE_AVAILABLE || !supabase) return;
     await supabase.auth.signOut();
+  };
+
+  const ensureAdminRecord = async (user: User) => {
+    if (!SUPABASE_AVAILABLE || !supabase) return;
+    try {
+      // Upsert self into admin_users so a freshly signed-up user gets admin access without manual DB edits
+      const { error } = await supabase
+        .from('admin_users')
+        .upsert({ id: user.id, email: user.email ?? '', role: 'admin', updated_at: new Date().toISOString() }, { onConflict: 'id' });
+      if (error) {
+        // Ignore policy errors silently; UI will still show non-admin
+        // console.warn('ensureAdminRecord error', error);
+      }
+    } catch {}
   };
 
   const value = {
@@ -92,6 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     loading,
     signIn,
+    signUp,
     signOut,
     isAdmin,
   };

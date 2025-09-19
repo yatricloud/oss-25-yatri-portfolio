@@ -8,15 +8,18 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [error, setError] = useState('');
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    const { error } = await signIn(email, password);
+    const { error } = mode === 'signin'
+      ? await signIn(email, password)
+      : await signUp(email, password);
     
     if (error) {
       setError(error.message);
@@ -44,8 +47,8 @@ const LoginForm = () => {
             >
               <Lock className="w-8 h-8 text-white" />
             </motion.div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Login</h1>
-            <p className="text-gray-600">Access the admin panel</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{mode === 'signin' ? 'Admin Login' : 'Create Admin Account'}</h1>
+            <p className="text-gray-600">{mode === 'signin' ? 'Access the admin panel' : 'Create your account to access admin'}</p>
           </div>
 
           {/* Error Message */}
@@ -60,7 +63,7 @@ const LoginForm = () => {
             </motion.div>
           )}
 
-          {/* Login Form */}
+          {/* Auth Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div>
@@ -126,18 +129,32 @@ const LoginForm = () => {
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Signing in...</span>
+                  <span>{mode === 'signin' ? 'Signing in...' : 'Creating account...'}</span>
                 </div>
               ) : (
-                'Sign In'
+                (mode === 'signin' ? 'Sign In' : 'Sign Up')
               )}
             </motion.button>
           </form>
 
           {/* Footer */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-500">
-              Only authorized administrators can access this panel
+            <p className="text-sm text-gray-600">
+              {mode === 'signin' ? (
+                <>
+                  Don't have an account?{' '}
+                  <button onClick={() => setMode('signup')} className="text-orange-600 hover:text-orange-700 font-semibold">
+                    Sign Up
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{' '}
+                  <button onClick={() => setMode('signin')} className="text-orange-600 hover:text-orange-700 font-semibold">
+                    Sign In
+                  </button>
+                </>
+              )}
             </p>
           </div>
         </div>

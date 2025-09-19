@@ -2,18 +2,24 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock, MessageSquare } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useProfile } from '../contexts/ProfileContext';
+import { useGitHubProfile } from '../hooks/useGitHubProfile';
+import { supabase, SUPABASE_AVAILABLE } from '../lib/supabase';
 
 const ContactSection = () => {
-  const { theme } = useTheme();
+  const { colors } = useTheme();
+  const { profile } = useProfile();
+  const { user: githubUser } = useGitHubProfile();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
     message: '',
-    projectType: 'web-development'
+    inquiryType: 'job-opportunity'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -25,56 +31,69 @@ const ContactSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        projectType: 'web-development'
-      });
-    }, 3000);
+    setSubmitError(null);
+
+    try {
+      if (!SUPABASE_AVAILABLE || !supabase) {
+        throw new Error('Supabase not configured');
+      }
+
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            subject: formData.subject,
+            message: formData.message,
+            inquiry_type: formData.inquiryType,
+          }
+        ]);
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', subject: '', message: '', inquiryType: 'job-opportunity' });
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 3000);
+    } catch (err: any) {
+      setSubmitError(err?.message || 'Failed to send message');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
     {
       icon: Mail,
       label: 'Email',
-      value: 'yatharth@example.com',
-      href: 'mailto:yatharth@example.com',
-      color: theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'
+      value: profile?.email || '—',
+      href: profile?.email ? `mailto:${profile.email}` : '#',
+      color: colors.primaryBg
     },
     {
       icon: Phone,
       label: 'Phone',
-      value: '+1 (555) 123-4567',
-      href: 'tel:+15551234567',
-      color: theme === 'blue' ? 'bg-blue-400' : 'bg-orange-400'
+      value: profile?.phone || '—',
+      href: profile?.phone ? `tel:${profile.phone}` : '#',
+      color: colors.primaryBg400
     },
     {
       icon: MapPin,
       label: 'Location',
-      value: 'San Francisco, CA',
+      value: profile?.location || githubUser?.location || '—',
       href: '#',
-      color: theme === 'blue' ? 'bg-blue-300' : 'bg-orange-300'
+      color: colors.primaryBg300
     }
   ];
 
-  const projectTypes = [
-    { value: 'ai-ml', label: 'AI/ML Development' },
-    { value: 'web-development', label: 'Web Development' },
-    { value: 'mobile-app', label: 'Mobile App' },
-    { value: 'data-science', label: 'Data Science' },
-    { value: 'consulting', label: 'Technical Consulting' },
+  const inquiryTypes = [
+    { value: 'job-opportunity', label: 'Job Opportunity' },
+    { value: 'collaboration', label: 'Collaboration' },
+    { value: 'networking', label: 'Networking' },
+    { value: 'mentorship', label: 'Mentorship' },
     { value: 'other', label: 'Other' }
   ];
 
@@ -111,20 +130,20 @@ const ContactSection = () => {
         transition={{ duration: 0.8 }}
       >
         <div className="flex items-center justify-center space-x-2">
-          <div className={`w-2 h-2 ${theme === 'blue' ? 'bg-blue-500' : 'bg-orange-500'} rounded-full`}></div>
+          <div className={`w-2 h-2 ${colors.indicatorDot} rounded-full`}></div>
           <span className="text-gray-600 font-medium uppercase tracking-wide text-sm">
             GET IN TOUCH
           </span>
         </div>
         <h2 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-          Let's Work Together
+          Let's Connect
           <br />
-          On Your Next Project
+          and Collaborate
         </h2>
         <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-          Ready to bring your ideas to life? I'm here to help you build innovative solutions
+          I'm always excited to connect with new people and explore opportunities.
           <br />
-          that make a real impact. Let's discuss your project requirements.
+          Whether it's a job opportunity, collaboration, or just to say hello - let's chat!
         </p>
       </motion.div>
 
@@ -235,21 +254,21 @@ const ContactSection = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                    placeholder="Project inquiry"
+                    placeholder="Job opportunity, collaboration, or general inquiry"
                   />
                 </div>
                 <div>
-                  <label htmlFor="projectType" className="block text-sm font-semibold text-gray-900 mb-2">
-                    Project Type
+                  <label htmlFor="inquiryType" className="block text-sm font-semibold text-gray-900 mb-2">
+                    Inquiry Type
                   </label>
                   <select
-                    id="projectType"
-                    name="projectType"
-                    value={formData.projectType}
+                    id="inquiryType"
+                    name="inquiryType"
+                    value={formData.inquiryType}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   >
-                    {projectTypes.map((type) => (
+                    {inquiryTypes.map((type) => (
                       <option key={type.value} value={type.value}>
                         {type.label}
                       </option>
@@ -270,17 +289,19 @@ const ContactSection = () => {
                   required
                   rows={6}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-                  placeholder="Tell me about your project, timeline, and requirements..."
+                  placeholder="Tell me about the opportunity, your company, or what you'd like to discuss..."
                 />
               </div>
+
+              {submitError && (
+                <div className="text-red-600 text-sm">{submitError}</div>
+              )}
 
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full ${
-                  theme === 'blue' 
-                    ? 'bg-blue-500 hover:bg-blue-600' 
-                    : 'bg-orange-500 hover:bg-orange-600'
+                  `${colors.primaryBg} ${colors.primaryBgHover}`
                 } text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed`}
                 whileHover={{ scale: isSubmitting ? 1 : 1.02, y: isSubmitting ? 0 : -2 }}
                 whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
