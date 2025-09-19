@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const DesignPartnerSection = () => {
   const { colors } = useTheme();
   const { profile } = useProfile();
-  const { user, loading } = useGitHubProfile();
+  const { user: authUser } = useAuth();
+  const { user, loading } = useGitHubProfile(authUser?.id);
   const [showFullSummary, setShowFullSummary] = useState(false);
 
   return (
@@ -22,7 +24,7 @@ const DesignPartnerSection = () => {
         <div className="relative">
           {/* Profile Image */}
           <motion.div
-            className="relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden shadow-2xl border-4 border-white"
+            className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 rounded-full overflow-hidden shadow-2xl border-4 border-white"
             whileHover={{ scale: 1.05, y: -5 }}
             transition={{ duration: 0.3 }}
           >
@@ -50,12 +52,12 @@ const DesignPartnerSection = () => {
         transition={{ duration: 0.8, delay: 0.4 }}
         className="space-y-6"
       >
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
           {profile?.fullName ? `Hi, I'm ${profile.fullName}` : "About Me"}
         </h2>
         {profile?.summary && (
           <div className="max-w-3xl mx-auto">
-            <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-4">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed mb-4">
               {profile.summary.length > 200 && !showFullSummary
                 ? `${profile.summary.substring(0, 200)}...` 
                 : profile.summary
@@ -102,7 +104,7 @@ const DesignPartnerSection = () => {
         <div className="flex items-center justify-center gap-4">
           <a
             href="#projects"
-            className="bg-gray-900 hover:bg-gray-800 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
+            className="bg-gray-900 hover:bg-gray-800 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 rounded-xl md:rounded-2xl font-semibold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
           >
             <span>💼</span>
             <span>View My Projects</span>

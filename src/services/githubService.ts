@@ -120,18 +120,34 @@ export class GitHubService {
   private static readonly GITHUB_API_BASE = 'https://api.github.com';
   private static readonly DEFAULT_USERNAME = 'YatharthChauhan2362';
 
-  private static async getConfiguredUsername(): Promise<string> {
+  private static async getConfiguredUsername(userId?: string): Promise<string> {
     try {
       if (!SUPABASE_AVAILABLE || !supabase) {
         return this.DEFAULT_USERNAME;
       }
-      const { data, error } = await supabase
+      
+      let query = supabase
         .from('github_urls')
         .select('url, updated_at, created_at')
         .order('updated_at', { ascending: false })
         .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
+      
+      // If userId is provided, try to get that user's GitHub URL first
+      if (userId) {
+        const { data: userData, error: userError } = await query
+          .eq('user_id', userId)
+          .maybeSingle();
+        
+        if (!userError && userData?.url) {
+          const url = userData.url as string;
+          const match = url.match(/github\.com\/(\w[\w-]+)/i);
+          if (match?.[1]) return match[1];
+        }
+      }
+      
+      // Fallback to latest GitHub URL (for non-signed-in users, this will be Yatharth's)
+      const { data, error } = await query.maybeSingle();
       if (error || !data?.url) return this.DEFAULT_USERNAME;
       const url = data.url as string;
       const match = url.match(/github\.com\/(\w[\w-]+)/i);
@@ -141,9 +157,9 @@ export class GitHubService {
     }
   }
 
-  static async fetchUserProfile(): Promise<GitHubUser | null> {
+  static async fetchUserProfile(userId?: string): Promise<GitHubUser | null> {
     try {
-      const username = await this.getConfiguredUsername();
+      const username = await this.getConfiguredUsername(userId);
       const response = await fetch(`${this.GITHUB_API_BASE}/users/${username}`);
       
       if (!response.ok) {
@@ -158,9 +174,9 @@ export class GitHubService {
     }
   }
 
-  static async fetchUserRepositories(): Promise<GitHubRepo[]> {
+  static async fetchUserRepositories(userId?: string): Promise<GitHubRepo[]> {
     try {
-      const username = await this.getConfiguredUsername();
+      const username = await this.getConfiguredUsername(userId);
       const response = await fetch(`${this.GITHUB_API_BASE}/users/${username}/repos?sort=updated&per_page=100&type=public`);
       
       if (!response.ok) {

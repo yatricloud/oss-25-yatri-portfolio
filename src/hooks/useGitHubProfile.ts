@@ -8,7 +8,7 @@ export interface UseGitHubProfileReturn {
   refreshProfile: () => Promise<void>;
 }
 
-export const useGitHubProfile = (): UseGitHubProfileReturn => {
+export const useGitHubProfile = (userId?: string): UseGitHubProfileReturn => {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +18,7 @@ export const useGitHubProfile = (): UseGitHubProfileReturn => {
       setLoading(true);
       setError(null);
       
-      const userProfile = await GitHubService.fetchUserProfile();
+      const userProfile = await GitHubService.fetchUserProfile(userId);
       setUser(userProfile);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch profile');
@@ -30,7 +30,7 @@ export const useGitHubProfile = (): UseGitHubProfileReturn => {
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [userId]); // Refetch when userId changes
 
   const refreshProfile = async () => {
     await fetchProfile();

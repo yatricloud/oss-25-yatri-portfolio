@@ -2,12 +2,14 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Github, Star, GitFork, Calendar, ArrowUpRight, RefreshCw, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useGitHubProjects } from '../hooks/useGitHubProjects';
 import { ProjectsSkeleton } from './ProjectSkeleton';
 import { ProcessedProject } from '../services/githubService';
 
 const ProjectsSection = () => {
   const { colors } = useTheme();
+  const { user } = useAuth();
   const {
     projects,
     loading,
@@ -21,7 +23,7 @@ const ProjectsSection = () => {
     setShowMore,
     displayedProjects,
     hasMoreProjects
-  } = useGitHubProjects();
+  } = useGitHubProjects(user?.id);
 
   const containerVariants = {
     hidden: { opacity: 0 },

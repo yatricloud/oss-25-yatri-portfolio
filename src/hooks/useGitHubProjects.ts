@@ -16,7 +16,7 @@ export interface UseGitHubProjectsReturn {
   hasMoreProjects: boolean;
 }
 
-export const useGitHubProjects = (): UseGitHubProjectsReturn => {
+export const useGitHubProjects = (userId?: string): UseGitHubProjectsReturn => {
   const [projects, setProjects] = useState<ProcessedProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +28,7 @@ export const useGitHubProjects = (): UseGitHubProjectsReturn => {
       setLoading(true);
       setError(null);
       
-      const repos = await GitHubService.fetchUserRepositories();
+      const repos = await GitHubService.fetchUserRepositories(userId);
       const processedProjects = GitHubService.processRepositories(repos);
       
       setProjects(processedProjects);
@@ -42,7 +42,7 @@ export const useGitHubProjects = (): UseGitHubProjectsReturn => {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [userId]); // Refetch when userId changes
 
   // Reset showMore when category changes
   useEffect(() => {

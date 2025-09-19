@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
@@ -56,26 +56,12 @@ export default function FAQSection() {
 
   const headerVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.23, 1, 0.32, 1],
-      },
-    },
+    visible: { opacity: 1, y: 0 },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.23, 1, 0.32, 1],
-      },
-    },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
@@ -100,12 +86,12 @@ export default function FAQSection() {
 
           {/* Main Headline */}
           <motion.div variants={headerVariants}>
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
               Frequently Asked
               <br />
               Questions
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Here are some common questions about my background, availability, and work preferences.
               <br />
               Feel free to reach out if you have any other questions!
@@ -124,11 +110,11 @@ export default function FAQSection() {
               key={index}
               className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
               variants={itemVariants}
-              whileHover={{ y: -2, shadow: "0 10px 25px -3px rgba(0, 0, 0, 0.1)" }}
+              whileHover={{ y: -2 }}
             >
               <button
                 onClick={() => toggleItem(index)}
-                className="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
+                className="w-full px-4 sm:px-6 md:px-8 py-4 sm:py-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
               >
                 <div className="flex items-center space-x-4">
                   <div className={`w-8 h-8 ${colors.primaryBg} rounded-full flex items-center justify-center flex-shrink-0`}>
@@ -138,7 +124,7 @@ export default function FAQSection() {
                       <Plus className="w-4 h-4 text-white" />
                     )}
                   </div>
-                  <span className="text-lg font-semibold text-gray-900">
+                  <span className="text-base sm:text-lg font-semibold text-gray-900">
                     {item.question}
                   </span>
                 </div>
@@ -161,7 +147,7 @@ export default function FAQSection() {
                 transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 className="overflow-hidden"
               >
-                <div className="px-8 pb-6 pl-20">
+                <div className="px-4 sm:px-6 md:px-8 pb-4 sm:pb-6 pl-16 sm:pl-20">
                   <p className="text-gray-600 leading-relaxed">
                     {item.answer}
                   </p>

@@ -2,12 +2,14 @@ import { motion, Variants } from 'framer-motion';
 import { User, ExternalLink } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const Footer = () => {
   const { theme } = useTheme();
   const { profile } = useProfile();
-  const { user } = useGitHubProfile();
+  const { user: authUser } = useAuth();
+  const { user } = useGitHubProfile(authUser?.id);
 
   // Dynamic footer links based on profile data
   const footerLinks = {
@@ -69,13 +71,13 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       <motion.div
-        className="max-w-7xl mx-auto px-8 py-16"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
           {/* Brand Section */}
           <motion.div className="lg:col-span-1" variants={itemVariants}>
             <motion.div 
@@ -97,7 +99,7 @@ const Footer = () => {
                   <User className="w-7 h-7 text-white" />
                 </div>
               )}
-              <span className="text-2xl font-bold">
+              <span className="text-xl sm:text-2xl font-bold">
                 {profile?.fullName || user?.name || 'Yatharth Chauhan'}
               </span>
             </motion.div>
@@ -112,7 +114,7 @@ const Footer = () => {
 
           {/* Services Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-bold mb-6">Services</h3>
+            <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6">Services</h3>
             <ul className="space-y-3">
               {footerLinks.services.map((link, index) => (
                 <motion.li key={link.name}>

@@ -24,19 +24,19 @@ function PortfolioApp() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navigation />
       
-      <div className="p-4 md:p-8">
+      <div className="px-4 py-2 md:p-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
-          className="max-w-7xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden min-h-[90vh] relative"
+          className="max-w-7xl mx-auto bg-white rounded-2xl md:rounded-3xl shadow-2xl overflow-hidden min-h-[90vh] relative"
         >
           {/* Background Pattern */}
           <div className="absolute inset-0 bg-gradient-to-br from-white via-gray-50 to-gray-100 opacity-50"></div>
           
           {/* Content */}
           <div className="relative z-10">
-            <main className="px-8 py-16 md:py-24">
+            <main className="px-4 py-8 md:px-8 md:py-16 lg:py-24">
               <div className="max-w-6xl mx-auto">
               <section id="about" aria-label="About Yatharth Chauhan">
                 <DesignPartnerSection />
@@ -80,8 +80,9 @@ function App() {
       <ProfileProvider>
             <Router>
               <Routes>
-                <Route path="/" element={<PortfolioApp />} />
+                <Route path="/" element={<AdminPage />} />
                 <Route path="/login" element={<AdminPage />} />
+                <Route path="/preview" element={<PortfolioApp />} />
                 <Route path="/portfolio/:deploymentId" element={<PortfolioViewer />} />
               </Routes>
             </Router>

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase, SUPABASE_AVAILABLE } from '../lib/supabase';
 import { GitHubService } from '../services/githubService';
+import { useAuth } from './AuthContext';
 
 export interface ProfileData {
   fullName: string | null;
@@ -53,6 +54,7 @@ interface ProfileContextType {
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,13 +64,29 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     try {
       setLoading(true);
       setError(null);
-      // Fetch the latest updated public profile (works for both anonymous and authenticated users)
-      const { data: p, error: pErr } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('updated_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+      
+      let profileQuery;
+      
+      if (user) {
+        // If user is signed in, fetch their own profile
+        profileQuery = supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+      } else {
+        // If user is not signed in, fetch Yatharth Chauhan's profile by default
+        // First try to find by email or name, fallback to latest updated
+        profileQuery = supabase
+          .from('profiles')
+          .select('*')
+          .or('full_name.ilike.%Yatharth Chauhan%,email.ilike.%yatharth%')
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+      }
+      
+      const { data: p, error: pErr } = await profileQuery;
       if (pErr) throw pErr;
 
       const profileId = (p as any)?.id;
@@ -146,14 +164,14 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
         }));
       }
 
-      // Fetch GitHub location as fallback
-      let githubLocation = null;
-      try {
-        const githubUser = await GitHubService.fetchUserProfile();
-        githubLocation = githubUser?.location || null;
-      } catch (e) {
-        console.warn('Failed to fetch GitHub location:', e);
-      }
+          // Fetch GitHub location as fallback
+          let githubLocation = null;
+          try {
+            const githubUser = await GitHubService.fetchUserProfile(user?.id);
+            githubLocation = githubUser?.location || null;
+          } catch (e) {
+            console.warn('Failed to fetch GitHub location:', e);
+          }
 
       setProfile({
         fullName: (p as any)?.full_name ?? null,
@@ -181,7 +199,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [user]); // Refetch profile when user authentication state changes
 
   const value = useMemo(() => ({ profile, loading, error, refresh: fetchProfile }), [profile, loading, error]);
 

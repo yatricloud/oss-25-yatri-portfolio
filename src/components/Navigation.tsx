@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Palette, Check } from 'lucide-react';
+import { ShoppingBag, User, Palette, Check, ArrowLeft } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const Navigation = () => {
   const { colors, theme, setTheme, availableThemes } = useTheme();
   const { profile } = useProfile();
-  const { user } = useGitHubProfile();
+  const { user: authUser } = useAuth();
+  const { user } = useGitHubProfile(authUser?.id);
+  const location = useLocation();
   const [isThemeOpen, setIsThemeOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const isPreviewPage = location.pathname === '/preview';
   
   const navItems = [
     { name: 'About', href: '#about' },
@@ -29,6 +36,14 @@ const Navigation = () => {
       setTheme(themeId as any);
     }
     setIsThemeOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -166,31 +181,114 @@ const Navigation = () => {
         </div>
         
         <motion.button
-          className={`${colors.primaryBg} ${colors.primaryBgHover} text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl`}
+          className={`${colors.primaryBg} ${colors.primaryBgHover} text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.8 }}
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => isPreviewPage ? window.location.href = '/' : document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
         >
-          View Projects
+          {isPreviewPage && <ArrowLeft className="w-4 h-4 mr-2" />}
+          {isPreviewPage ? 'Back to Dashboard' : 'View Projects'}
         </motion.button>
       </div>
       
       {/* Mobile Menu Button */}
       <motion.button 
-        className="md:hidden p-2"
+        className="md:hidden p-2 relative z-50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
+        onClick={toggleMobileMenu}
       >
         <div className="space-y-1">
-          <div className="w-6 h-0.5 bg-gray-600"></div>
-          <div className="w-6 h-0.5 bg-gray-600"></div>
-          <div className="w-6 h-0.5 bg-gray-600"></div>
+          <div className={`w-6 h-0.5 bg-gray-600 transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
+          <div className={`w-6 h-0.5 bg-gray-600 transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+          <div className={`w-6 h-0.5 bg-gray-600 transition-transform duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
         </div>
       </motion.button>
+
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Backdrop */}
+            <div 
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+              onClick={closeMobileMenu}
+            />
+            
+            {/* Menu Content */}
+            <motion.div
+              className="absolute top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-xl"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="px-4 py-6 space-y-4">
+                {/* Navigation Items */}
+                {navItems.map((item, index) => (
+                  <motion.a
+                    key={item.name}
+                    href={item.href}
+                    onClick={closeMobileMenu}
+                    className="block text-lg font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200 py-2"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    {item.name}
+                  </motion.a>
+                ))}
+                
+                {/* Theme Toggle */}
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-medium text-gray-700">Theme</span>
+                    <button
+                      onClick={toggleTheme}
+                      className="relative w-10 h-10 bg-white shadow-lg rounded-xl flex items-center justify-center border border-gray-200 hover:shadow-xl transition-all duration-300"
+                    >
+                      <Palette className="w-5 h-5 text-gray-700" />
+                      <div
+                        className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-white shadow-sm"
+                        style={{ backgroundColor: availableThemes.find(t => t.id === theme)?.colors[0] || '#3B82F6' }}
+                      />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* View Projects / Back to Dashboard Button */}
+                <motion.button
+                  onClick={() => {
+                    closeMobileMenu();
+                    if (isPreviewPage) {
+                      window.location.href = '/';
+                    } else {
+                      document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                  className={`w-full ${colors.primaryBg} ${colors.primaryBgHover} text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                >
+                  {isPreviewPage && <ArrowLeft className="w-4 h-4 mr-2" />}
+                  {isPreviewPage ? 'Back to Dashboard' : 'View Projects'}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Background Overlay for Theme Dropdown */}
       <AnimatePresence>

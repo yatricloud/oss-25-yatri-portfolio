@@ -3,13 +3,15 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock, MessageSquare } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useGitHubProfile } from '../hooks/useGitHubProfile';
 import { supabase, SUPABASE_AVAILABLE } from '../lib/supabase';
 
 const ContactSection = () => {
   const { colors } = useTheme();
   const { profile } = useProfile();
-  const { user: githubUser } = useGitHubProfile();
+  const { user: authUser } = useAuth();
+  const { user: githubUser } = useGitHubProfile(authUser?.id);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -135,12 +137,12 @@ const ContactSection = () => {
             GET IN TOUCH
           </span>
         </div>
-        <h2 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
           Let's Connect
           <br />
           and Collaborate
         </h2>
-        <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
           I'm always excited to connect with new people and explore opportunities.
           <br />
           Whether it's a job opportunity, collaboration, or just to say hello - let's chat!
@@ -148,7 +150,7 @@ const ContactSection = () => {
       </motion.div>
 
       <motion.div
-        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -156,7 +158,7 @@ const ContactSection = () => {
         {/* Contact Info */}
         <motion.div className="space-y-8" variants={cardVariants}>
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-gray-900">Contact Information</h3>
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Contact Information</h3>
             <p className="text-gray-600 leading-relaxed">
               Feel free to reach out through any of these channels. I typically respond within 24 hours.
             </p>
@@ -208,7 +210,7 @@ const ContactSection = () => {
         >
           {!isSubmitted ? (
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
                     Full Name *
@@ -220,7 +222,7 @@ const ContactSection = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Your full name"
                   />
                 </div>
@@ -235,13 +237,13 @@ const ContactSection = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="your.email@example.com"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label htmlFor="subject" className="block text-sm font-semibold text-gray-900 mb-2">
                     Subject *
@@ -253,7 +255,7 @@ const ContactSection = () => {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     placeholder="Job opportunity, collaboration, or general inquiry"
                   />
                 </div>
@@ -266,7 +268,7 @@ const ContactSection = () => {
                     name="inquiryType"
                     value={formData.inquiryType}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   >
                     {inquiryTypes.map((type) => (
                       <option key={type.value} value={type.value}>
@@ -302,7 +304,7 @@ const ContactSection = () => {
                 disabled={isSubmitting}
                 className={`w-full ${
                   `${colors.primaryBg} ${colors.primaryBgHover}`
-                } text-white py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed`}
+                } text-white py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed`}
                 whileHover={{ scale: isSubmitting ? 1 : 1.02, y: isSubmitting ? 0 : -2 }}
                 whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
               >
@@ -334,7 +336,7 @@ const ContactSection = () => {
               >
                 <CheckCircle className="w-10 h-10 text-white" />
               </motion.div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Message Sent Successfully!</h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Message Sent Successfully!</h3>
               <p className="text-gray-600 mb-6">
                 Thank you for reaching out. I'll get back to you within 24 hours.
               </p>

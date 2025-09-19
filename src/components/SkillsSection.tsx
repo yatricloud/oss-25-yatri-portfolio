@@ -97,10 +97,10 @@ const SkillsSection = () => {
             TECHNICAL EXPERTISE
           </span>
         </div>
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
           Skills & Technologies
         </h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
           From AI model development to full-stack applications, I leverage cutting-edge
           <br />
           technologies to build intelligent, scalable solutions.
@@ -119,11 +119,11 @@ const SkillsSection = () => {
           >
             {skillCategories.map((category) => (
               <div key={category.id} className="text-center space-y-3">
-                <h3 className="text-2xl font-bold text-gray-900">{category.title}</h3>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{category.title}</h3>
                 {category.subtitle && (
                   <div className="text-sm text-gray-500">{category.subtitle}</div>
                 )}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 justify-items-center">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 justify-items-center">
                   {category.skills.map((skill, index) => (
                     <motion.span
                       key={`${category.title}-${skill}-${index}`}
@@ -139,7 +139,7 @@ const SkillsSection = () => {
           </motion.div>
         ) : (
       <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 justify-items-center"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -166,7 +166,7 @@ const SkillsSection = () => {
                           <category.icon className="w-7 h-7 text-white" />
                     </motion.div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-xl font-bold text-gray-900">{category.title}</h3>
+                          <h3 className="text-lg sm:text-xl font-bold text-gray-900">{category.title}</h3>
                           {category.subtitle && (
                             <div className="text-sm text-gray-500 truncate">{category.subtitle}</div>
                           )}
@@ -174,7 +174,7 @@ const SkillsSection = () => {
                   </div>
 
                       {/* Skills Chips */}
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                     {category.skills.map((skill, index) => (
                           <motion.span
                             key={`${category.title}-${skill}-${index}`}

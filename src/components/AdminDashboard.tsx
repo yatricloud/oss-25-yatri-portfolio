@@ -15,7 +15,6 @@ import { useProfile } from '../contexts/ProfileContext';
 import { supabase, SUPABASE_AVAILABLE, GitHubUrl } from '../lib/supabase';
 import { DeploymentService, DeploymentStatus } from '../services/deploymentService';
 import { checkDatabaseSetup } from '../utils/databaseSetup';
-import FaviconCustomizer from './FaviconCustomizer';
 
 const AdminDashboard = () => {
   const { user, signOut, isAdmin } = useAuth();
@@ -516,6 +515,28 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteAllDeployments = async () => {
+    if (!user || !supabase) return;
+    
+    if (!confirm('Are you sure you want to delete all deployment history? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      const { error } = await supabase
+        .from('deployments')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      
+      setDeployments([]);
+      setSuccess('All deployment history has been deleted.');
+    } catch (error: any) {
+      setError(error.message || 'Failed to delete deployments');
+    }
+  };
+
   // Polling function (not used in current implementation)
   // const pollDeploymentStatus = async (deploymentId: string) => {
   //   // ... implementation
@@ -625,18 +646,20 @@ const AdminDashboard = () => {
           <div className="mt-3 text-xs text-gray-500">Formats: JSON Resume (jsonresume.org) and PDF (stored & linked).</div>
         </div>
 
-        {/* Favicon Customizer */}
-        <FaviconCustomizer className="mb-8" />
-
-        {/* Add URL Button */}
-        <div className="mb-8">
+        {/* GitHub Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">GitHub URLs</h2>
+              <p className="text-gray-600 text-sm">Manage your GitHub repository URLs for project display.</p>
+            </div>
           <motion.button
             onClick={() => setShowForm(true)}
-            className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            Add GitHub URL
+              Add GitHub URL
           </motion.button>
         </div>
 
@@ -645,11 +668,11 @@ const AdminDashboard = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-lg p-6 mb-8"
+              className="bg-white rounded-2xl shadow-lg p-6 mb-6"
           >
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
               {editingUrl ? 'Edit GitHub URL' : 'Add New GitHub URL'}
-            </h2>
+              </h3>
             
             {error && (
               <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center space-x-3">
@@ -694,7 +717,7 @@ const AdminDashboard = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  {submitting ? 'Saving...' : (editingUrl ? 'Update URL' : 'Add URL')}
+                    {submitting ? 'Saving...' : (editingUrl ? 'Update URL' : 'Add URL')}
                 </motion.button>
                 
                 <button
@@ -708,6 +731,105 @@ const AdminDashboard = () => {
             </form>
           </motion.div>
         )}
+
+        {/* GitHub URLs List */}
+          {loading ? (
+            <div className="p-8 text-center">
+              <Loader className="w-8 h-8 animate-spin text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">Loading URLs...</p>
+            </div>
+          ) : githubUrls.length === 0 ? (
+            <div className="p-8 text-center">
+              <Link className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No GitHub URLs added yet.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-200">
+              {githubUrls.map((url) => (
+                <motion.div
+                  key={url.id}
+                  className="flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <Github className="w-5 h-5 text-gray-400" />
+                        <a
+                          href={url.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-800 font-medium break-all"
+                        >
+                          {url.url}
+                        </a>
+                      </div>
+                      
+                      {url.description && (
+                        <p className="text-gray-600 text-sm mb-2">{url.description}</p>
+                      )}
+                      
+                      <div className="flex items-center space-x-4 text-xs text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="w-3 h-3" />
+                          <span>{new Date(url.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <User className="w-3 h-3" />
+                          <span>Admin</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 ml-4">
+                      <motion.button
+                        onClick={() => handleEdit(url)}
+                      className="px-3 py-1 text-gray-400 hover:text-blue-600 transition-colors text-sm"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                      Edit
+                      </motion.button>
+                      
+                      <motion.button
+                        onClick={() => handleDelete(url.id)}
+                      className="px-3 py-1 text-gray-400 hover:text-red-600 transition-colors text-sm"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                      Delete
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Preview Section */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Preview Portfolio</h2>
+              <p className="text-gray-600 text-sm">Preview your portfolio before going live to see how it looks.</p>
+            </div>
+            <motion.a
+              href="/preview"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span>👁️</span>
+              <span className="ml-2">Preview Portfolio</span>
+            </motion.a>
+          </div>
+          <div className="text-sm text-gray-500">
+            Click the button above to open your portfolio preview in a new tab. This shows exactly how your portfolio will look to visitors.
+          </div>
+        </div>
 
         {/* Go Live Section */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
@@ -768,7 +890,17 @@ const AdminDashboard = () => {
           {/* Deployment Status */}
           {deployments.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-md font-medium text-gray-900">Deployment History</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-md font-medium text-gray-900">Deployment History</h3>
+                <motion.button
+                  onClick={handleDeleteAllDeployments}
+                  className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Delete All
+                      </motion.button>
+              </div>
               {deployments.map((deployment) => (
                 <motion.div
                   key={deployment.id}
@@ -822,86 +954,6 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        {/* GitHub URLs List */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">GitHub URLs</h2>
-          </div>
-          
-          {loading ? (
-            <div className="p-8 text-center">
-              <Loader className="w-8 h-8 animate-spin text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Loading URLs...</p>
-            </div>
-          ) : githubUrls.length === 0 ? (
-            <div className="p-8 text-center">
-              <Link className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No GitHub URLs added yet.</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-200">
-              {githubUrls.map((url) => (
-                <motion.div
-                  key={url.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="p-6 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <Github className="w-5 h-5 text-gray-400" />
-                        <a
-                          href={url.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:text-blue-800 font-medium break-all"
-                        >
-                          {url.url}
-                        </a>
-                      </div>
-                      
-                      {url.description && (
-                        <p className="text-gray-600 text-sm mb-2">{url.description}</p>
-                      )}
-                      
-                      <div className="flex items-center space-x-4 text-xs text-gray-500">
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="w-3 h-3" />
-                          <span>{new Date(url.created_at).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <User className="w-3 h-3" />
-                          <span>Admin</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2 ml-4">
-                      <motion.button
-                        onClick={() => handleEdit(url)}
-                        className="px-3 py-1 text-gray-400 hover:text-blue-600 transition-colors text-sm"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        Edit
-                      </motion.button>
-                      
-                      <motion.button
-                        onClick={() => handleDelete(url.id)}
-                        className="px-3 py-1 text-gray-400 hover:text-red-600 transition-colors text-sm"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                      >
-                        Delete
-                      </motion.button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
