@@ -1,15 +1,14 @@
-import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Github, Star, GitFork, Calendar, ArrowUpRight, RefreshCw, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useProfile } from '../contexts/ProfileContext';
 import { useGitHubProjects } from '../hooks/useGitHubProjects';
 import { ProjectsSkeleton } from './ProjectSkeleton';
 import { ProcessedProject } from '../services/githubService';
 
 const ProjectsSection = () => {
-  const { colors } = useTheme();
   const { user } = useAuth();
+  const { profile, githubUser } = useProfile();
   const {
     projects,
     loading,
@@ -381,7 +380,7 @@ const ProjectsSection = () => {
         transition={{ duration: 0.6, delay: 0.8 }}
       >
         <motion.a
-          href="https://github.com/YatharthChauhan2362"
+          href={profile?.github || (githubUser?.login ? `https://github.com/${githubUser.login}` : '#')}
           target="_blank"
           rel="noopener noreferrer"
           className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-1 mx-auto inline-block"

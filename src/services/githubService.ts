@@ -118,7 +118,7 @@ import { supabase, SUPABASE_AVAILABLE } from '../lib/supabase';
 
 export class GitHubService {
   private static readonly GITHUB_API_BASE = 'https://api.github.com';
-  private static readonly DEFAULT_USERNAME = 'YatharthChauhan2362';
+  private static readonly DEFAULT_USERNAME = import.meta.env.VITE_DEFAULT_GITHUB_USERNAME || 'YatharthChauhan2362';
 
   private static async getConfiguredUsername(userId?: string): Promise<string> {
     try {

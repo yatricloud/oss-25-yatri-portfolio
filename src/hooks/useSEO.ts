@@ -1,20 +1,18 @@
 import { useEffect } from 'react';
 import { useProfile } from '../contexts/ProfileContext';
-import { useGitHubProfile } from './useGitHubProfile';
 
 export const useSEO = () => {
-  const { profile } = useProfile();
-  const { user } = useGitHubProfile();
+  const { profile, githubUser } = useProfile();
 
   useEffect(() => {
-    if (!profile && !user) return;
+    if (!profile && !githubUser) return;
 
-    const fullName = profile?.fullName || user?.name || 'Yatharth Chauhan';
-    const headline = profile?.headline || 'Microsoft Azure Solution Architect & DevOps Expert';
-    const summary = profile?.summary || user?.bio || 'Microsoft Azure Solution Architect & DevOps Expert | GitHub & CRM Enthusiast | 16x Microsoft Certified | Gold Microsoft Learn Student Ambassador';
-    const avatarUrl = user?.avatar_url || 'https://avatars.githubusercontent.com/u/YatharthChauhan2362';
-    const githubUrl = user?.login ? `https://github.com/${user.login}` : 'https://github.com/YatharthChauhan2362';
-    const linkedinUrl = profile?.linkedin || 'https://linkedin.com/in/yatharthchauhan';
+    const fullName = profile?.fullName || githubUser?.name || 'Portfolio';
+    const headline = profile?.headline || 'Professional Portfolio';
+    const summary = profile?.summary || githubUser?.bio || 'Professional portfolio showcasing skills, experience, and projects.';
+    const avatarUrl = profile?.avatarUrl || githubUser?.avatar_url || '/favicon.svg';
+    const githubUrl = profile?.github || (githubUser?.login ? `https://github.com/${githubUser.login}` : '');
+    const linkedinUrl = profile?.linkedin || '';
 
     // Update page title
     const title = `${fullName} - ${headline}`;
@@ -32,6 +30,14 @@ export const useSEO = () => {
     // Update image
     updateMetaTag('og-image', avatarUrl);
     updateMetaTag('twitter-image', avatarUrl);
+    
+    // Update additional meta tags
+    updateMetaTag('og-url', window.location.href);
+    updateMetaTag('og-site_name', `${fullName} Portfolio`);
+    updateMetaTag('twitter-creator', githubUser?.twitter_username ? `@${githubUser.twitter_username}` : '');
+    
+    // Update author
+    updateMetaTag('author', fullName);
 
     // Update structured data
     updateStructuredData({
@@ -46,10 +52,11 @@ export const useSEO = () => {
       location: profile?.location,
       skills: profile?.skills?.map(s => s.name) || [],
       experiences: profile?.experiences || [],
-      educations: profile?.educations || []
+      educations: profile?.educations || [],
+      certifications: profile?.certifications || []
     });
 
-  }, [profile, user]);
+  }, [profile, githubUser]);
 
   const updateMetaTag = (id: string, content: string) => {
     const element = document.getElementById(id);
@@ -65,7 +72,7 @@ export const useSEO = () => {
       "name": data.name,
       "jobTitle": data.jobTitle,
       "description": data.description,
-      "url": "https://yatharthchauhan.com",
+      "url": window.location.href,
       "image": data.image,
       "email": data.email,
       "telephone": data.phone,
@@ -75,36 +82,22 @@ export const useSEO = () => {
       } : undefined,
       "sameAs": [
         data.githubUrl,
-        data.linkedinUrl,
-        "https://youtube.com/@YatriCloud"
+        data.linkedinUrl
       ].filter(Boolean),
       "knowsAbout": data.skills,
-      "hasCredential": [
-        {
-          "@type": "EducationalOccupationalCredential",
-          "name": "Microsoft Azure Certified Expert Level",
-          "credentialCategory": "certification"
-        },
-        {
-          "@type": "EducationalOccupationalCredential", 
-          "name": "GitHub Advanced Security",
-          "credentialCategory": "certification"
-        }
-      ],
+      "hasCredential": data.certifications ? data.certifications.map((cert: any) => ({
+        "@type": "EducationalOccupationalCredential",
+        "name": cert.name || cert,
+        "credentialCategory": "certification"
+      })) : [],
       "alumniOf": data.educations.length > 0 ? {
         "@type": "EducationalOrganization",
         "name": data.educations[0].institution
-      } : {
-        "@type": "EducationalOrganization",
-        "name": "Charotar University of Science & Technology"
-      },
+      } : undefined,
       "worksFor": data.experiences.length > 0 ? {
         "@type": "Organization",
         "name": data.experiences[0].company
-      } : {
-        "@type": "Organization",
-        "name": "Ascendion"
-      }
+      } : undefined
     };
 
     const script = document.getElementById('structured-data');

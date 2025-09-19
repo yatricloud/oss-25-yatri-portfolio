@@ -11,9 +11,37 @@ A modern, responsive portfolio website built with React, TypeScript, and Tailwin
 - **Modern UI/UX**: Beautiful animations and smooth interactions using Framer Motion
 - **Dark/Light Theme**: Toggle between themes with persistent state
 
+## 🔧 Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Supabase Configuration (Required)
+VITE_SUPABASE_URL=your_supabase_url_here
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# Vercel Configuration (Optional - for deployment features)
+VITE_VERCEL_TOKEN=your_vercel_token_here
+VITE_VERCEL_TEAM_ID=your_vercel_team_id_here
+VITE_VERCEL_TEMPLATE_REPO=your_vercel_template_repo_here
+
+# GitHub Configuration (Optional - for custom default user)
+VITE_DEFAULT_GITHUB_USERNAME=your_default_github_username_here
+```
+
+### Required Variables
+- **VITE_SUPABASE_URL**: Your Supabase project URL
+- **VITE_SUPABASE_ANON_KEY**: Your Supabase anonymous key
+
+### Optional Variables
+- **VITE_VERCEL_TOKEN**: Vercel API token for deployment features
+- **VITE_VERCEL_TEAM_ID**: Vercel team ID for deployment features
+- **VITE_VERCEL_TEMPLATE_REPO**: Template repository for deployments
+- **VITE_DEFAULT_GITHUB_USERNAME**: Default GitHub username (fallback when no user is signed in)
+
 ## 🚀 GitHub Projects Integration
 
-The projects section automatically fetches data from your GitHub profile (`@YatharthChauhan2362`) and displays:
+The projects section automatically fetches data from your GitHub profile and displays:
 
 - **Repository Information**: Name, description, programming language
 - **GitHub Stats**: Stars, forks, last updated date
