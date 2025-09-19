@@ -14,9 +14,11 @@ import PortfolioViewer from './pages/PortfolioViewer';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProfileProvider } from './contexts/ProfileContext';
 import { useSEO } from './hooks/useSEO';
+import { useDynamicFavicon } from './hooks/useDynamicFavicon';
 
 function PortfolioApp() {
   useSEO(); // Initialize SEO updates
+  useDynamicFavicon(); // Initialize dynamic favicon
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">

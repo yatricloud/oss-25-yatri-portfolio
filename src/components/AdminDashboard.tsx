@@ -15,6 +15,7 @@ import { useProfile } from '../contexts/ProfileContext';
 import { supabase, SUPABASE_AVAILABLE, GitHubUrl } from '../lib/supabase';
 import { DeploymentService, DeploymentStatus } from '../services/deploymentService';
 import { checkDatabaseSetup } from '../utils/databaseSetup';
+import FaviconCustomizer from './FaviconCustomizer';
 
 const AdminDashboard = () => {
   const { user, signOut, isAdmin } = useAuth();
@@ -623,6 +624,10 @@ const AdminDashboard = () => {
           </div>
           <div className="mt-3 text-xs text-gray-500">Formats: JSON Resume (jsonresume.org) and PDF (stored & linked).</div>
         </div>
+
+        {/* Favicon Customizer */}
+        <FaviconCustomizer className="mb-8" />
+
         {/* Add URL Button */}
         <div className="mb-8">
           <motion.button
