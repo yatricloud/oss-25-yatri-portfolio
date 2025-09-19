@@ -49,6 +49,7 @@ interface ProfileContextType {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  githubUser: any | null;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -56,6 +57,7 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [githubUser, setGithubUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -164,26 +166,31 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
         }));
       }
 
-          // Fetch GitHub location as fallback
+          // Fetch GitHub data
+          let githubUserData = null;
           let githubLocation = null;
           try {
-            const githubUser = await GitHubService.fetchUserProfile(user?.id);
-            githubLocation = githubUser?.location || null;
+            console.log('Fetching GitHub data for user:', user?.id);
+            githubUserData = await GitHubService.fetchUserProfile(user?.id);
+            console.log('GitHub data fetched:', githubUserData);
+            githubLocation = githubUserData?.location || null;
+            setGithubUser(githubUserData);
           } catch (e) {
-            console.warn('Failed to fetch GitHub location:', e);
+            console.warn('Failed to fetch GitHub data:', e);
+            setGithubUser(null);
           }
 
       setProfile({
-        fullName: (p as any)?.full_name ?? null,
+        fullName: (p as any)?.full_name ?? githubUserData?.name ?? null,
         headline: (p as any)?.headline ?? null,
-        summary: (p as any)?.summary ?? null,
+        summary: (p as any)?.summary ?? githubUserData?.bio ?? null,
         email: (p as any)?.email ?? null,
         phone: (p as any)?.phone ?? null,
         location: (p as any)?.location ?? githubLocation,
-        website: (p as any)?.website ?? null,
-        github: (p as any)?.github ?? null,
+        website: (p as any)?.website ?? githubUserData?.blog ?? null,
+        github: (p as any)?.github ?? (githubUserData?.login ? `https://github.com/${githubUserData.login}` : null),
         linkedin: (p as any)?.linkedin ?? null,
-        avatarUrl: (p as any)?.avatar_url ?? null,
+        avatarUrl: (p as any)?.avatar_url ?? githubUserData?.avatar_url ?? null,
         resumePdfUrl: pdfUrl,
         experiences,
         educations,
@@ -201,7 +208,20 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     fetchProfile();
   }, [user]); // Refetch profile when user authentication state changes
 
-  const value = useMemo(() => ({ profile, loading, error, refresh: fetchProfile }), [profile, loading, error]);
+  // Listen for storage events to refresh when GitHub URLs are updated
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'github-url-updated') {
+        fetchProfile();
+        localStorage.removeItem('github-url-updated');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const value = useMemo(() => ({ profile, loading, error, refresh: fetchProfile, githubUser }), [profile, loading, error, githubUser]);
 
   return (
     <ProfileContext.Provider value={value}>

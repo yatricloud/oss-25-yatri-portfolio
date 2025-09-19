@@ -2,14 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const DesignPartnerSection = () => {
   const { colors } = useTheme();
-  const { profile } = useProfile();
-  const { user: authUser } = useAuth();
-  const { user, loading } = useGitHubProfile(authUser?.id);
+  const { profile, githubUser } = useProfile();
   const [showFullSummary, setShowFullSummary] = useState(false);
 
   return (
@@ -28,10 +24,10 @@ const DesignPartnerSection = () => {
             whileHover={{ scale: 1.05, y: -5 }}
             transition={{ duration: 0.3 }}
           >
-            {user?.avatar_url ? (
+            {githubUser?.avatar_url ? (
               <img
-                src={user.avatar_url}
-                alt={profile?.fullName || user.name || 'Profile'}
+                src={githubUser.avatar_url}
+                alt={profile?.fullName || githubUser.name || 'Profile'}
                 className="w-full h-full object-cover"
               />
             ) : (

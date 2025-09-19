@@ -3,15 +3,11 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock, MessageSquare } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useGitHubProfile } from '../hooks/useGitHubProfile';
 import { supabase, SUPABASE_AVAILABLE } from '../lib/supabase';
 
 const ContactSection = () => {
   const { colors } = useTheme();
-  const { profile } = useProfile();
-  const { user: authUser } = useAuth();
-  const { user: githubUser } = useGitHubProfile(authUser?.id);
+  const { profile, githubUser } = useProfile();
   const [formData, setFormData] = useState({
     name: '',
     email: '',

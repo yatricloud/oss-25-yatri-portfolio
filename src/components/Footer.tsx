@@ -2,14 +2,10 @@ import { motion, Variants } from 'framer-motion';
 import { User, ExternalLink } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const Footer = () => {
   const { theme } = useTheme();
-  const { profile } = useProfile();
-  const { user: authUser } = useAuth();
-  const { user } = useGitHubProfile(authUser?.id);
+  const { profile, githubUser } = useProfile();
 
   // Dynamic footer links based on profile data
   const footerLinks = {
@@ -28,7 +24,7 @@ const Footer = () => {
     resources: [
       { name: 'FAQ', href: '#faq' },
       { name: 'Contact', href: '#contact' },
-      { name: 'GitHub', href: `https://github.com/${user?.login}` || '#' },
+      { name: 'GitHub', href: `https://github.com/${githubUser?.login}` || '#' },
       { name: 'LinkedIn', href: profile?.linkedin || '#' }
     ]
   };
@@ -86,10 +82,10 @@ const Footer = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
             >
-              {user?.avatar_url ? (
+              {githubUser?.avatar_url ? (
                 <img
-                  src={user.avatar_url}
-                  alt={profile?.fullName || user.name || 'Profile'}
+                  src={githubUser.avatar_url}
+                  alt={profile?.fullName || githubUser.name || 'Profile'}
                   className="w-12 h-12 rounded-full object-cover"
                 />
               ) : (
@@ -100,11 +96,11 @@ const Footer = () => {
                 </div>
               )}
               <span className="text-xl sm:text-2xl font-bold">
-                {profile?.fullName || user?.name || 'Yatharth Chauhan'}
+                {profile?.fullName || githubUser?.name || 'Yatharth Chauhan'}
               </span>
             </motion.div>
             <p className="text-gray-400 leading-relaxed mb-6">
-              {profile?.summary || user?.bio || 'Microsoft Azure Solution Architect & DevOps Expert helping businesses build intelligent, scalable solutions with cutting-edge technologies.'}
+              {profile?.summary || githubUser?.bio || 'Microsoft Azure Solution Architect & DevOps Expert helping businesses build intelligent, scalable solutions with cutting-edge technologies.'}
             </p>
             <div className="flex items-center space-x-2 text-gray-400">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -239,11 +235,11 @@ const Footer = () => {
                 Phone
               </motion.a>
                 <motion.a
-                  href={profile?.location || user?.location ? '#' : '#'}
+                  href={profile?.location || githubUser?.location ? '#' : '#'}
                   className="hover:text-white transition-colors duration-200"
                   whileHover={{ y: -2 }}
                 >
-                  {profile?.location || user?.location || 'Remote'}
+                  {profile?.location || githubUser?.location || 'Remote'}
                 </motion.a>
             </motion.div>
           </div>

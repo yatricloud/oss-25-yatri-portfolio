@@ -136,22 +136,32 @@ export class GitHubService {
       // If userId is provided, try to get that user's GitHub URL first
       if (userId) {
         const { data: userData, error: userError } = await query
-          .eq('user_id', userId)
+          .eq('created_by', userId)
           .maybeSingle();
         
         if (!userError && userData?.url) {
           const url = userData.url as string;
+          console.log('GitHubService: Found user URL:', url);
           const match = url.match(/github\.com\/(\w[\w-]+)/i);
-          if (match?.[1]) return match[1];
+          if (match?.[1]) {
+            console.log('GitHubService: Extracted username:', match[1]);
+            return match[1];
+          }
         }
       }
       
       // Fallback to latest GitHub URL (for non-signed-in users, this will be Yatharth's)
       const { data, error } = await query.maybeSingle();
-      if (error || !data?.url) return this.DEFAULT_USERNAME;
+      if (error || !data?.url) {
+        console.log('GitHubService: No GitHub URLs found, using default:', this.DEFAULT_USERNAME);
+        return this.DEFAULT_USERNAME;
+      }
       const url = data.url as string;
+      console.log('GitHubService: Using fallback URL:', url);
       const match = url.match(/github\.com\/(\w[\w-]+)/i);
-      return match?.[1] || this.DEFAULT_USERNAME;
+      const username = match?.[1] || this.DEFAULT_USERNAME;
+      console.log('GitHubService: Fallback username:', username);
+      return username;
     } catch {
       return this.DEFAULT_USERNAME;
     }
@@ -159,7 +169,9 @@ export class GitHubService {
 
   static async fetchUserProfile(userId?: string): Promise<GitHubUser | null> {
     try {
+      console.log('GitHubService: Getting username for userId:', userId);
       const username = await this.getConfiguredUsername(userId);
+      console.log('GitHubService: Using username:', username);
       const response = await fetch(`${this.GITHUB_API_BASE}/users/${username}`);
       
       if (!response.ok) {
@@ -167,6 +179,7 @@ export class GitHubService {
       }
 
       const user: GitHubUser = await response.json();
+      console.log('GitHubService: Fetched user data:', user);
       return user;
     } catch (error) {
       console.error('Error fetching GitHub user profile:', error);

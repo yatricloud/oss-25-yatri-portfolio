@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import Navigation from './components/Navigation';
 import DesignPartnerSection from './components/DesignPartnerSection';
 import SkillsSection from './components/SkillsSection';
@@ -19,6 +20,8 @@ import { useDynamicFavicon } from './hooks/useDynamicFavicon';
 function PortfolioApp() {
   useSEO(); // Initialize SEO updates
   useDynamicFavicon(); // Initialize dynamic favicon
+  const location = useLocation();
+  const isPreviewPage = location.pathname === '/preview';
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -64,6 +67,22 @@ function PortfolioApp() {
             
             <Footer />
           </div>
+
+          {/* Back to Dashboard Button - Only show on preview page */}
+          {isPreviewPage && (
+            <motion.a
+              href="/login"
+              className="fixed bottom-6 left-6 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center space-x-2 z-50"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Dashboard</span>
+            </motion.a>
+          )}
 
           {/* Decorative Elements */}
           <div className="absolute top-1/4 left-8 w-32 h-32 bg-gradient-to-br from-orange-200 to-orange-300 rounded-full opacity-20 blur-xl"></div>

@@ -109,6 +109,14 @@ const AdminDashboard = () => {
       setShowForm(false);
       setEditingUrl(null);
       await fetchGitHubUrls();
+      
+      // Trigger profile refresh to update GitHub data
+      await refresh();
+      
+      // Notify other components to refresh
+      localStorage.setItem('github-url-updated', 'true');
+      
+      setSuccess('GitHub URL updated! Profile data refreshed with new GitHub information.');
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -131,6 +139,12 @@ const AdminDashboard = () => {
 
       if (error) throw error;
       await fetchGitHubUrls();
+      
+      // Trigger profile refresh to update GitHub data
+      await refresh();
+      
+      // Notify other components to refresh
+      localStorage.setItem('github-url-updated', 'true');
     } catch (error: any) {
       setError(error.message);
     }
@@ -600,67 +614,80 @@ const AdminDashboard = () => {
             <span className="text-green-800 text-sm">{success}</span>
           </div>
         )}
-        {/* Resume Upload */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Upload Resume</h2>
-              <p className="text-gray-600 text-sm">Upload JSON Resume to auto-fill data, or upload a PDF resume to store and link it.</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <label
-                className={`px-4 py-2 rounded-xl font-semibold text-white ${resumeUploading ? 'bg-gray-400' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'} cursor-pointer`}
-              >
-                <input
-                  type="file"
-                  accept="application/json,.json"
-                  className="hidden"
-                  disabled={resumeUploading}
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) handleResumeFile(f);
-                    e.currentTarget.value = '';
-                  }}
-                />
-                {resumeUploading ? 'Processing...' : 'Upload JSON'}
-              </label>
+            {/* Resume Upload */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">Upload Resume</h2>
+                  <p className="text-gray-600 text-sm">Upload JSON Resume to auto-fill data, or upload a PDF resume to store and link it.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <label
+                    className={`px-4 py-2 rounded-xl font-semibold text-white ${resumeUploading ? 'bg-gray-400' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'} cursor-pointer`}
+                  >
+                    <input
+                      type="file"
+                      accept="application/json,.json"
+                      className="hidden"
+                      disabled={resumeUploading}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) handleResumeFile(f);
+                        e.currentTarget.value = '';
+                      }}
+                    />
+                    {resumeUploading ? 'Processing...' : 'Upload JSON'}
+                  </label>
 
-              <label
-                className={`px-4 py-2 rounded-xl font-semibold text-white ${resumePdfUploading ? 'bg-gray-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'} cursor-pointer`}
-              >
-                <input
-                  type="file"
-                  accept="application/pdf,.pdf"
-                  className="hidden"
-                  disabled={resumePdfUploading}
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) handleResumePdfFile(f);
-                    e.currentTarget.value = '';
-                  }}
-                />
-                {resumePdfUploading ? 'Uploading...' : 'Upload PDF'}
-              </label>
+                  <label
+                    className={`px-4 py-2 rounded-xl font-semibold text-white ${resumePdfUploading ? 'bg-gray-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700'} cursor-pointer`}
+                  >
+                    <input
+                      type="file"
+                      accept="application/pdf,.pdf"
+                      className="hidden"
+                      disabled={resumePdfUploading}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) handleResumePdfFile(f);
+                        e.currentTarget.value = '';
+                      }}
+                    />
+                    {resumePdfUploading ? 'Uploading...' : 'Upload PDF'}
+                  </label>
+                </div>
+              </div>
+              <div className="mt-3 text-xs text-gray-500">Formats: JSON Resume (jsonresume.org) and PDF (stored & linked).</div>
             </div>
-          </div>
-          <div className="mt-3 text-xs text-gray-500">Formats: JSON Resume (jsonresume.org) and PDF (stored & linked).</div>
-        </div>
 
         {/* GitHub Section */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">GitHub URLs</h2>
-              <p className="text-gray-600 text-sm">Manage your GitHub repository URLs for project display.</p>
-            </div>
-          <motion.button
-            onClick={() => setShowForm(true)}
-              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-              Add GitHub URL
-          </motion.button>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">GitHub URLs</h2>
+                  <p className="text-gray-600 text-sm">Manage your GitHub repository URLs for project display.</p>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <motion.button
+                    onClick={async () => {
+                      await refresh();
+                      setSuccess('Profile data refreshed with latest GitHub information!');
+                    }}
+                    className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Refresh Data
+                  </motion.button>
+                  <motion.button
+                    onClick={() => setShowForm(true)}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Add GitHub URL
+                  </motion.button>
+                </div>
         </div>
 
         {/* Add/Edit Form */}
@@ -807,57 +834,57 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        {/* Preview Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Preview Portfolio</h2>
-              <p className="text-gray-600 text-sm">Preview your portfolio before going live to see how it looks.</p>
-            </div>
-            <motion.a
-              href="/preview"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>👁️</span>
-              <span className="ml-2">Preview Portfolio</span>
-            </motion.a>
-          </div>
-          <div className="text-sm text-gray-500">
-            Click the button above to open your portfolio preview in a new tab. This shows exactly how your portfolio will look to visitors.
-          </div>
-        </div>
-
-        {/* Go Live Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
+            {/* Preview Section */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+              <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">Deploy Portfolio</h2>
-                  <p className="text-gray-600 text-sm">Create a live portfolio URL using the same React components as your main page.</p>
+                  <h2 className="text-lg font-semibold text-gray-900">Preview Portfolio</h2>
+                  <p className="text-gray-600 text-sm">Preview your portfolio with current GitHub data and resume before going live.</p>
                 </div>
-            <motion.button
-              onClick={handleGoLive}
-              disabled={isDeploying || databaseReady === false}
-              className={`inline-flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white ${
-                isDeploying || databaseReady === false
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-              }`}
-              whileHover={!isDeploying && databaseReady !== false ? { scale: 1.05 } : {}}
-              whileTap={!isDeploying && databaseReady !== false ? { scale: 0.95 } : {}}
-            >
-              {isDeploying ? (
-                'Deploying...'
-              ) : databaseReady === false ? (
-                'Database Setup Required'
-              ) : (
-                'Go Live'
-              )}
-            </motion.button>
-          </div>
+                <motion.a
+                  href="/preview"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center space-x-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <span>Preview Portfolio</span>
+                </motion.a>
+              </div>
+            </div>
+
+            {/* Go Live Section */}
+            <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+              <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-900">Deploy Portfolio</h2>
+                      <p className="text-gray-600 text-sm">Create a live portfolio URL using the same React components as your main page.</p>
+                    </div>
+                <motion.button
+                  onClick={handleGoLive}
+                  disabled={isDeploying || databaseReady === false}
+                  className={`inline-flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white ${
+                    isDeploying || databaseReady === false
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                  }`}
+                  whileHover={!isDeploying && databaseReady !== false ? { scale: 1.05 } : {}}
+                  whileTap={!isDeploying && databaseReady !== false ? { scale: 0.95 } : {}}
+                >
+                  {isDeploying ? (
+                    'Deploying...'
+                  ) : databaseReady === false ? (
+                    'Database Setup Required'
+                  ) : (
+                    'Go Live'
+                  )}
+                </motion.button>
+              </div>
 
           {deploymentError && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center space-x-3">

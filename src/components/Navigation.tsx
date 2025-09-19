@@ -1,22 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Palette, Check, ArrowLeft } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { User, Palette, Check } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useProfile } from '../contexts/ProfileContext';
-import { useAuth } from '../contexts/AuthContext';
-import { useGitHubProfile } from '../hooks/useGitHubProfile';
 
 const Navigation = () => {
   const { colors, theme, setTheme, availableThemes } = useTheme();
-  const { profile } = useProfile();
-  const { user: authUser } = useAuth();
-  const { user } = useGitHubProfile(authUser?.id);
-  const location = useLocation();
+  const { profile, githubUser } = useProfile();
   const [isThemeOpen, setIsThemeOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  const isPreviewPage = location.pathname === '/preview';
   
   const navItems = [
     { name: 'About', href: '#about' },
@@ -59,10 +51,10 @@ const Navigation = () => {
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.2 }}
       >
-        {user?.avatar_url ? (
+        {githubUser?.avatar_url ? (
           <img
-            src={user.avatar_url}
-            alt={profile?.fullName || user.name || 'Profile'}
+            src={githubUser.avatar_url}
+            alt={profile?.fullName || githubUser.name || 'Profile'}
             className="w-10 h-10 rounded-full object-cover"
           />
         ) : (
@@ -71,7 +63,7 @@ const Navigation = () => {
           </div>
         )}
         <span className="text-xl font-bold text-gray-900">
-          {profile?.fullName || user?.name || 'Portfolio'}
+          {profile?.fullName || githubUser?.name || 'Portfolio'}
         </span>
       </motion.div>
 
@@ -181,16 +173,15 @@ const Navigation = () => {
         </div>
         
         <motion.button
-          className={`${colors.primaryBg} ${colors.primaryBgHover} text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center`}
+          className={`${colors.primaryBg} ${colors.primaryBgHover} text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.8 }}
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => isPreviewPage ? window.location.href = '/' : document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
         >
-          {isPreviewPage && <ArrowLeft className="w-4 h-4 mr-2" />}
-          {isPreviewPage ? 'Back to Dashboard' : 'View Projects'}
+          View Projects
         </motion.button>
       </div>
       
@@ -266,23 +257,18 @@ const Navigation = () => {
                   </div>
                 </div>
                 
-                {/* View Projects / Back to Dashboard Button */}
+                {/* View Projects Button */}
                 <motion.button
                   onClick={() => {
                     closeMobileMenu();
-                    if (isPreviewPage) {
-                      window.location.href = '/';
-                    } else {
-                      document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-                    }
+                    document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className={`w-full ${colors.primaryBg} ${colors.primaryBgHover} text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center`}
+                  className={`w-full ${colors.primaryBg} ${colors.primaryBgHover} text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.4 }}
                 >
-                  {isPreviewPage && <ArrowLeft className="w-4 h-4 mr-2" />}
-                  {isPreviewPage ? 'Back to Dashboard' : 'View Projects'}
+                  View Projects
                 </motion.button>
               </div>
             </motion.div>
